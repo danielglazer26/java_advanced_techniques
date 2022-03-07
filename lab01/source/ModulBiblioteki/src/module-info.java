@@ -1,0 +1,3 @@
+module ModulBiblioteki {
+	exports library;
+}
