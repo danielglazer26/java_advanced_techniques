@@ -22,10 +22,11 @@ public class Encoder {
 
     public static void main(String... args) {
 
-        choosePath("C:\\Pwr\\3 rok\\6 semestr\\ZT - Java\\Test\\dsa");
-
-        findChanges().forEach(strings -> System.out.println(strings.get(0) + " " + strings.get(1)));
-
+        if (args.length != 0) {
+            choosePath(args[0]);
+            findChanges().forEach(strings -> System.out.println(strings.get(0) + " " + strings.get(1)));
+        } else
+            System.out.println("Brak sciezki");
     }
 
     private static boolean readMD5() {

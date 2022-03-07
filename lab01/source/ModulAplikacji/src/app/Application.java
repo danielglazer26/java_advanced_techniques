@@ -6,8 +6,11 @@ import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
+import java.net.URISyntaxException;
 
 public class Application extends JDialog {
     private JPanel contentPane;
@@ -51,7 +54,12 @@ public class Application extends JDialog {
     private void actionChooseFile() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        fileChooser.setCurrentDirectory(new File("C:\\Pwr\\3 rok\\6 semestr\\ZT - Java\\Test"));
+        try {
+            fileChooser.setCurrentDirectory(new File(Application.class.getProtectionDomain().getCodeSource().getLocation()
+                    .toURI()));
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
         if (fileChooser.showOpenDialog(this) == 0) {
 
             filePath = fileChooser.getSelectedFile().toString();
