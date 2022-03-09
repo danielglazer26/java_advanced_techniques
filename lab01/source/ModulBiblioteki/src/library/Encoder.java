@@ -14,23 +14,70 @@ import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
 public class Encoder {
-
     private static String catalogPath;
+
     private static HashMap<String, String> savedSnapshot;
     private static HashMap<String, String> currentSnapshot;
 
 
     public static void main(String... args) {
-
         if (args.length != 0) {
             choosePath(args[0]);
             findChanges().forEach(strings -> System.out.println(strings.get(0) + " " + strings.get(1)));
         } else
-            System.out.println("Brak sciezki");
+            System.out.println("Brak ścieżki");
     }
 
-    private static boolean readMD5() {
+    /**
+     * Wybieranie ścieżki katalogu
+     */
+    public static void choosePath(String path) {
+        catalogPath = path;
+    }
 
+    /**
+     * Szukanie zmian w plikach
+     */
+    public static ArrayList<ArrayList<String>> findChanges() {
+        ArrayList<ArrayList<String>> localizationOfChangedFiles = new ArrayList<>();
+
+        boolean md5Exist = readMD5();
+        generateMD5();
+
+        if (md5Exist) {
+            boolean fileDeleted;
+
+            for (Map.Entry<String, String> saved : savedSnapshot.entrySet()) {
+                fileDeleted = true;
+                for (Map.Entry<String, String> current : currentSnapshot.entrySet()) {
+
+                    if (Objects.equals(saved.getKey(), current.getKey())) {
+                        if (!Objects.equals(saved.getValue(), current.getValue()))
+                            localizationOfChangedFiles.add(new ArrayList<>(Arrays.asList(saved.getKey(), "Zmiana")));
+                        else
+                            localizationOfChangedFiles.add(new ArrayList<>(Arrays.asList(saved.getKey(), "Brak zmian")));
+                        currentSnapshot.remove(current.getKey());
+                        fileDeleted = false;
+                        break;
+                    }
+
+                }
+                if (fileDeleted)
+                    localizationOfChangedFiles.add(new ArrayList<>(Arrays.asList(saved.getKey(), "Usunięto")));
+            }
+
+        }
+
+        currentSnapshot.forEach((s, s2) -> localizationOfChangedFiles.add(new ArrayList<>(Arrays.asList(s, "Dodano"))));
+
+
+        return localizationOfChangedFiles;
+    }
+
+    /**
+     * Odczytywanie pliku md5
+     */
+    private static boolean readMD5() {
         try {
             BufferedReader br = new BufferedReader(new FileReader(catalogPath + "\\.md5"));
             String line;
@@ -47,18 +94,20 @@ public class Encoder {
 
     }
 
+    /**
+     * Generowanie pliku md5
+     */
     private static void generateMD5() {
-
         try {
             currentSnapshot = new HashMap<>();
             MessageDigest md = MessageDigest.getInstance("MD5");
 
             InputStream is = null;
             DigestInputStream dis = null;
-            for (String filePath : makeListOfFiles()) {
-                is = Files.newInputStream(Path.of(filePath));
+            for (Path filePath : makeListOfFiles()) {
+                is = Files.newInputStream(filePath);
                 dis = new DigestInputStream(is, md);
-                currentSnapshot.put(filePath, Arrays.toString(md.digest(dis.readAllBytes())));
+                currentSnapshot.put(filePath.getFileName().toString(), Arrays.toString(md.digest(dis.readAllBytes())));
             }
             if (is != null)
                 is.close();
@@ -72,8 +121,11 @@ public class Encoder {
         saveToMD5();
     }
 
-    private static void saveToMD5() {
 
+    /**
+     * Zapisywanie ukrytego pliku md5 do wybranego katalogu
+     */
+    private static void saveToMD5() {
         Path pathMD5 = Path.of(catalogPath + "\\.md5");
         try (OutputStream out = new BufferedOutputStream(
                 Files.newOutputStream(pathMD5, CREATE, TRUNCATE_EXISTING))) {
@@ -90,57 +142,13 @@ public class Encoder {
         }
     }
 
-    private static List<String> makeListOfFiles() throws IOException {
+    /**
+     * Filtrowanie plików i tworzenie z nich listy
+     */
+    private static List<Path> makeListOfFiles() throws IOException {
         return Files.list(Paths.get(catalogPath))
                 .filter(Files::isRegularFile)
                 .filter(e -> !e.endsWith(".md5"))
-                .map(Path::toString)
                 .collect(Collectors.toList());
-    }
-
-    public static void choosePath(String path) {
-        catalogPath = path;
-    }
-
-    public static ArrayList<ArrayList<String>> findChanges() {
-        ArrayList<ArrayList<String>> localizationOfChangedFiles = new ArrayList<>();
-
-        if (readMD5()) {
-            generateMD5();
-
-            boolean fileDeleted;
-
-            // sprawdzenie zmian
-            for (Map.Entry<String, String> saved : savedSnapshot.entrySet()) {
-                fileDeleted = true;
-                for (Map.Entry<String, String> current : currentSnapshot.entrySet()) {
-
-                    if (Objects.equals(saved.getKey(), current.getKey())) {
-                        if (!Objects.equals(saved.getValue(), current.getValue()))
-                            localizationOfChangedFiles.add(new ArrayList<>(Arrays.asList(saved.getKey(), "Zmiana")));
-                        currentSnapshot.remove(current.getKey());
-                        fileDeleted = false;
-                        break;
-                    }
-
-                }
-                if (fileDeleted)
-                    localizationOfChangedFiles.add(new ArrayList<>(Arrays.asList(saved.getKey(), "Usunięto")));
-                else if (localizationOfChangedFiles.size() == 0)
-                    localizationOfChangedFiles.add(new ArrayList<>(Arrays.asList(saved.getKey(), "Brak zmian")));
-                else if (!localizationOfChangedFiles
-                        .get(localizationOfChangedFiles.size() - 1)
-                        .get(0)
-                        .equals(saved.getKey()))
-                    localizationOfChangedFiles.add(new ArrayList<>(Arrays.asList(saved.getKey(), "Brak zmian")));
-            }
-
-        } else
-            generateMD5();
-
-        if (currentSnapshot.size() > 0)
-            currentSnapshot.forEach((s, s2) -> localizationOfChangedFiles.add(new ArrayList<>(Arrays.asList(s, "Dodano"))));
-
-        return localizationOfChangedFiles;
     }
 }

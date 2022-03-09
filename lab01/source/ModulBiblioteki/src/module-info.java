@@ -1,3 +1,3 @@
 module ModulBiblioteki {
-	exports library;
+	exports library to ModulAplikacji;
 }

@@ -6,11 +6,8 @@ import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.net.URISyntaxException;
+
 
 public class Application extends JDialog {
     private JPanel contentPane;
@@ -27,39 +24,32 @@ public class Application extends JDialog {
         setModal(true);
         getRootPane().setDefaultButton(buttonChooseFile);
 
-        buttonChooseFile.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                actionChooseFile();
-            }
-        });
+        buttonChooseFile.addActionListener(e -> actionChooseFile());
 
-        buttonRefresh.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                actionRefresh();
-            }
-        });
+        buttonRefresh.addActionListener(e -> actionRefresh());
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-        // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
+        contentPane.registerKeyboardAction(e -> dispose(),
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
     }
 
+    public static void main(String[] args) {
+        Application dialog = new Application();
+        dialog.pack();
+        dialog.setVisible(true);
+        System.exit(0);
+    }
+
+    /**
+     * Panel wyboru katalogu
+     */
     private void actionChooseFile() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        try {
-            fileChooser.setCurrentDirectory(new File(Application.class.getProtectionDomain().getCodeSource().getLocation()
-                    .toURI()));
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+
         if (fileChooser.showOpenDialog(this) == 0) {
 
             filePath = fileChooser.getSelectedFile().toString();
@@ -79,13 +69,9 @@ public class Application extends JDialog {
         refreshFiles();
     }
 
-    public static void main(String[] args) {
-        Application dialog = new Application();
-        dialog.pack();
-        dialog.setVisible(true);
-        System.exit(0);
-    }
-
+    /**
+     * Utworzenie tabeli
+     */
     private void createUIComponents() {
         scrollTable = new JScrollPane();
         add(scrollTable, BorderLayout.CENTER);
@@ -96,6 +82,9 @@ public class Application extends JDialog {
         scrollTable.setViewportView(table1);
     }
 
+    /**
+     * Odświeżenie zmian w plikach
+     */
     private void refreshFiles() {
         if (filePath != null) {
             catalogLocalization.setText(filePath);
@@ -106,6 +95,9 @@ public class Application extends JDialog {
         }
     }
 
+    /**
+     * Dopasowywanie column w tabeli
+     */
     public void resizeColumnWidth(JTable table) {
         final TableColumnModel columnModel = table.getColumnModel();
         for (int column = 0; column < table.getColumnCount(); column++) {

@@ -1,5 +1,5 @@
 module ModulAplikacji {
-    exports app;
+    requires java.base;
     requires java.desktop;
     requires ModulBiblioteki;
 }

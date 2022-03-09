@@ -1,0 +1,5 @@
+Komenda utworzenia:
+jlink --module-path "C:\Pwr\3 rok\6 semestr\ZT - Java\dglazer_252743_java\lab01\release\JLink" --add-modules ModulAplikacji,ModulBiblioteki --output "C:\Pwr\3 rok\6 semestr\ZT - Java\dglazer_252743_java\lab01\release\JLink\build"
+
+Uruchomienie:
+build/bin/java --module ModulAplikacji/app.Application
