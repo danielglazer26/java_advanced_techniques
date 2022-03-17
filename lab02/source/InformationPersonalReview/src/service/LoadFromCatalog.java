@@ -1,44 +1,60 @@
 package service;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-import java.awt.*;
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.WeakHashMap;
 
 public class LoadFromCatalog {
 
-    public WeakHashMap<String[], BufferedImage> getPersonalData() {
-        return personalData;
+    private final Path catalogPath;
+    private WeakHashMap<String, DataFromFile> personalData = new WeakHashMap<>();
+
+    public LoadFromCatalog(Path path) {
+        catalogPath = path;
     }
 
-    private WeakHashMap<String [], BufferedImage> personalData = new WeakHashMap<>();
+    public String loadCatalogs(String catalogName) {
 
-    LoadFromCatalog(){
+
+        if (!personalData.containsKey(catalogName)) {
+            personalData.put(new String(catalogName), loadDataFromCatalog(catalogPath + "\\" + catalogName));
+            return "Wczytano z dysku";
+        } else
+            return "Wczytano z mapy";
 
     }
-    private void loadFiles(Path catalogPath){
 
+    /*private boolean checkKey(String catalogNameWeak) {
+
+        for (Map.Entry<WeakReference<String>, DataFromFile> entry : personalData.entrySet()) {
+            WeakReference<String> stringWeakReference = entry.getKey();
+            if (Objects.equals(stringWeakReference.get(), catalogNameWeak))
+                return false;
+        }
+        return true;
+    }*/
+
+    private DataFromFile loadDataFromCatalog(String pathToCatalog) {
         try {
-
-            personalData.put(loadTextFile(Path.of(catalogPath.toString()+"\\record.txt")),
-                    loadImageFile(catalogPath + "\\image.png"));
-
+            String[] tableData = loadTextFile(pathToCatalog);
+            ImageIcon icon = new ImageIcon(pathToCatalog + "\\image.png");
+            return new DataFromFile(tableData, icon);
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
+
     }
-    private String [] loadTextFile(Path textPath) throws IOException {
-        InputStream inputStream = Files.newInputStream(textPath);
-        String personalInformation = Arrays.toString(inputStream.readAllBytes());
+
+    private String[] loadTextFile(String pathToCatalog) throws IOException {
+        InputStream inputStream = Files.newInputStream(Path.of(pathToCatalog + "\\record.txt"));
+        String personalInformation = new String(inputStream.readAllBytes());
 
         return personalInformation.split(",");
     }
@@ -47,10 +63,5 @@ public class LoadFromCatalog {
         return ImageIO.read(new File(imagePath));
     }
 
-    public static void main(String[] args) {
-        LoadFromCatalog loadFromCatalog = new LoadFromCatalog();
-        loadFromCatalog
-                .loadFiles(
-                        Path.of("C:\\Pwr\\3 rok\\6 semestr\\ZT - Java\\dglazer_252743_java\\lab02\\source\\InformationPersonalReview\\out\\Test\\252743"));
-    }
+
 }
