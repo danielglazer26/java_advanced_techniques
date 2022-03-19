@@ -1,9 +1,6 @@
 package service;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -19,49 +16,40 @@ public class LoadFromCatalog {
         catalogPath = path;
     }
 
-    public String loadCatalogs(String catalogName) {
-
+    public DataFromFile loadCatalogs(String catalogName, JLabel labelSave) {
 
         if (!personalData.containsKey(catalogName)) {
-            personalData.put(new String(catalogName), loadDataFromCatalog(catalogPath + "\\" + catalogName));
-            return "Wczytano z dysku";
+            String pathToFiles = catalogPath + "\\" + catalogName;
+            try {
+                personalData.put(new String(catalogName),
+                        new DataFromFile(getStrings(pathToFiles), getImageIcon(pathToFiles)));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            labelSave.setText("Wczytano z dysku");
         } else
-            return "Wczytano z mapy";
+             labelSave.setText("Wczytano z mapy");
 
+        return personalData.get(catalogName);
     }
 
-    /*private boolean checkKey(String catalogNameWeak) {
 
-        for (Map.Entry<WeakReference<String>, DataFromFile> entry : personalData.entrySet()) {
-            WeakReference<String> stringWeakReference = entry.getKey();
-            if (Objects.equals(stringWeakReference.get(), catalogNameWeak))
-                return false;
-        }
-        return true;
-    }*/
+    private ImageIcon getImageIcon(String pathToCatalog) {
+        ImageIcon icon = new ImageIcon(pathToCatalog + "\\image.jpg");
+        return icon;
+    }
 
-    private DataFromFile loadDataFromCatalog(String pathToCatalog) {
-        try {
-            String[] tableData = loadTextFile(pathToCatalog);
-            ImageIcon icon = new ImageIcon(pathToCatalog + "\\image.png");
-            return new DataFromFile(tableData, icon);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-
+    private String[] getStrings(String pathToCatalog) throws IOException {
+        String[] tableData = loadTextFile(pathToCatalog);
+        return tableData;
     }
 
     private String[] loadTextFile(String pathToCatalog) throws IOException {
         InputStream inputStream = Files.newInputStream(Path.of(pathToCatalog + "\\record.txt"));
         String personalInformation = new String(inputStream.readAllBytes());
+        inputStream.close();
 
         return personalInformation.split(",");
     }
-
-    private BufferedImage loadImageFile(String imagePath) throws IOException {
-        return ImageIO.read(new File(imagePath));
-    }
-
 
 }

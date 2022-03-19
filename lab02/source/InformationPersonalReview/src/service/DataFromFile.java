@@ -1,13 +1,12 @@
 package service;
 
 import javax.swing.*;
-import java.awt.image.BufferedImage;
+import java.io.Serializable;
 
-public class DataFromFile {
+public class DataFromFile implements Serializable {
     private String name;
     private String surname;
     private String age;
-    private String gender;
     private String placeOfResidence;
     private ImageIcon image;
 
@@ -15,10 +14,10 @@ public class DataFromFile {
         this.name = data[0];
         this.surname = data[1];
         this.age = data[2];
-        this.gender = data[3];
-        this.placeOfResidence = data[4];
+        this.placeOfResidence = data[3];
         this.image = image;
     }
+
 
     public String getName() {
         return name;
@@ -44,14 +43,6 @@ public class DataFromFile {
         this.age = age;
     }
 
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
     public String getPlaceOfResidence() {
         return placeOfResidence;
     }
@@ -67,4 +58,6 @@ public class DataFromFile {
     public void setImage(ImageIcon image) {
         this.image = image;
     }
+
+
 }
