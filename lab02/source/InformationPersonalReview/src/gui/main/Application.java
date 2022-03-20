@@ -6,7 +6,9 @@ import service.data.DataFromFile;
 import service.loader.LoadFromCatalog;
 
 import javax.swing.*;
-import java.awt.event.*;
+import javax.swing.filechooser.FileSystemView;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,10 +26,27 @@ public class Application extends JFrame {
     private Boolean changeViewer = true;
 
     public static void main(String[] args) {
-        Application dialog = new Application(args[0]);
+        String path;
+        if (args.length == 0)
+             path = actionChooseFile();
+        else
+            path = args[0];
+        Application dialog = new Application(path);
         dialog.pack();
         dialog.setVisible(true);
     }
+
+    private static String actionChooseFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSystemView(FileSystemView.getFileSystemView());
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+        if (fileChooser.showOpenDialog(null) == 0) {
+            return fileChooser.getSelectedFile().toString();
+        }
+        return actionChooseFile();
+    }
+
 
     public Application(String pathS) {
 
