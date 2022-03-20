@@ -1,6 +1,6 @@
 package gui.viewer;
 
-import service.DataFromFile;
+import service.data.DataFromFile;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,4 +1,6 @@
-package service;
+package service.loader;
+
+import service.data.DataFromFile;
 
 import javax.swing.*;
 import java.io.IOException;

@@ -2,8 +2,8 @@ package gui.main;
 
 import gui.viewer.ContentOne;
 import gui.viewer.ContentViewerFrame;
-import service.DataFromFile;
-import service.LoadFromCatalog;
+import service.data.DataFromFile;
+import service.loader.LoadFromCatalog;
 
 import javax.swing.*;
 import java.awt.event.*;

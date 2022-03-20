@@ -1,4 +1,4 @@
-package service;
+package service.data;
 
 import javax.swing.*;
 import java.io.Serializable;
