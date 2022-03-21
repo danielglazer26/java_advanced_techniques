@@ -56,6 +56,7 @@ public class GeoClientConnection {
         JsonReaderFactory readerFactory = Json.createReaderFactory(Collections.emptyMap());
         JsonReader jsonReader = readerFactory.createReader(new ByteArrayInputStream(jsonBody.getBytes()));
         var json = jsonReader.readObject().getJsonObject("data");
+
         Country country = null;
         if (json != null) {
             country = objectMapper.readValue(json.toString(), Country.class);
