@@ -112,8 +112,8 @@ class MainWindow extends JFrame {
      * Generates question from randomized population and country
      */
     private void generateQuestion() {
-        population = generateRandomData(3000000, 10000);
-        geo.generateData(generateRandomData(197, 0), population);
+        population = generateRandomData(300000, 10000);
+        geo.generateData(generateRandomData(199, 0), population);
         setQuestionLabel();
         generateAnswers();
         nextQuestionButton.setEnabled(false);
@@ -124,7 +124,7 @@ class MainWindow extends JFrame {
      * Sets question label
      */
     private void setQuestionLabel() {
-        questionLabel.setText(lang.createQuestion(geo.getCountryCode(), String.valueOf(population)));
+        questionLabel.setText(lang.createQuestion(geo.getCountryCode(), population));
     }
 
     /**
@@ -132,7 +132,7 @@ class MainWindow extends JFrame {
      */
     private void setAnswerLabel() {
         answerLabel.setText(lang.createAnswer(answerCorrection, geo.getCountryCode(), geo.getCityNumber(),
-                String.valueOf(population)));
+                population));
     }
 
     /**

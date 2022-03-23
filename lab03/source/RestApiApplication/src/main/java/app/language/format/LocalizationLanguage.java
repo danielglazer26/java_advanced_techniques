@@ -11,7 +11,7 @@ public class LocalizationLanguage {
 
     private ResourceBundle resourceBundle;
     private MessageFormat mf;
-    private Format[] formats;
+    private Format[] formatAnswer, formatQuestion;
 
     public LocalizationLanguage(String[] pref) {
         refreshLocal(pref);
@@ -34,13 +34,16 @@ public class LocalizationLanguage {
                 resourceBundle.getString("two-for"),
                 resourceBundle.getString("multi")};
 
-        formats = new Format[]{
+        formatAnswer = new Format[]{
                 new ChoiceFormat(limitsAnswer, answerStrings),
                 null,
                 new ChoiceFormat(limits, fileStrings),
-                null,
-                NumberFormat.getInstance()};
+                NumberFormat.getInstance(mf.getLocale()),
+                NumberFormat.getInstance(mf.getLocale())};
 
+        formatQuestion = new Format[]{
+                null,
+                NumberFormat.getInstance(mf.getLocale())};
     }
 
     /**
@@ -57,28 +60,30 @@ public class LocalizationLanguage {
     /**
      * Creates answer for specified data
      */
-    public String createAnswer(int answerCorrection, String countryCode, int cityNumber, String population){
+    public String createAnswer(int answerCorrection, String countryCode, int cityNumber, int population) {
         mf.applyPattern(resourceBundle.getString("answer"));
-        mf.setFormats(formats);
+        mf.setFormats(formatAnswer);
         Object[] answerObject = {answerCorrection, countryCode, chooseTypeOfNumber(cityNumber), population,
-                String.valueOf(cityNumber) };
+                cityNumber};
         return mf.format(answerObject);
     }
 
     /**
      * Creates question for specified countryCode and population
      */
-    public String createQuestion(String countryCode, String population) {
+    public String createQuestion(String countryCode, int population) {
         mf.applyPattern(resourceBundle.getString("question"));
+        mf.setFormats(formatQuestion);
         Object[] questionObject = {countryCode, population};
         return mf.format(questionObject);
     }
 
     /**
      * Gets template string from bundle
+     *
      * @return template string
      */
-    public String getTemplate(String template){
+    public String getTemplate(String template) {
         return resourceBundle.getString(template);
     }
 
@@ -86,6 +91,22 @@ public class LocalizationLanguage {
      * Chooses type of number variation
      */
     private int chooseTypeOfNumber(int number) {
+
+        if (number > 100) {
+            String s = String.valueOf(number);
+            String s2 = s.substring(s.length() - 2);
+            number = Integer.parseInt(s2);
+            if (number == 0 || number == 1)
+                return 3;
+        }
+
+        if (number > 20) {
+            String s = String.valueOf(number);
+            number = s.charAt(s.length() - 1) - '0';
+            if (number > 1 && number < 5)
+                return 2;
+        }
+
         if (number == 0)
             return 0;
         else if (number == 1)
