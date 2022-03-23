@@ -13,7 +13,8 @@ public class Bundle extends ListResourceBundle {
                 {"zero", "is no city"},
                 {"one", "is one city"},
                 {"two-for", "are {4} cities"},
-                {"multi", "are {4} cities"}
+                {"multi", "are {4} cities"},
+                {"next", "Next"}
         };
     }
 

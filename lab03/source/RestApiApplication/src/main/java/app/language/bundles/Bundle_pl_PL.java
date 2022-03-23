@@ -13,7 +13,8 @@ public class Bundle_pl_PL extends ListResourceBundle {
                 {"zero", "nie istnieje żadne miasto, którego"},
                 {"one", "istnieje jedno miasto, którego"},
                 {"two-for", "istnieją {4} miasta, których"},
-                {"multi", "istnieje {4} miast, których"}
+                {"multi", "istnieje {4} miast, których"},
+                {"next", "Dalej"}
         };
     }
 }

@@ -2,7 +2,7 @@ package app.language.bundles;
 
 import java.util.ListResourceBundle;
 
-public class Bundle_en extends ListResourceBundle {
+public class Bundle_en_EN extends ListResourceBundle {
     @Override
     protected Object[][] getContents() {
         return new Object[][]{
@@ -13,7 +13,8 @@ public class Bundle_en extends ListResourceBundle {
                 {"zero", "is no city"},
                 {"one", "is one city"},
                 {"two-for", "are {4} cities"},
-                {"multi", "are {4} cities"}
+                {"multi", "are {4} cities"},
+                {"next", "Next"}
         };
     }
 }

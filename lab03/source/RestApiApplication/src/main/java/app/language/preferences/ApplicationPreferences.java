@@ -8,11 +8,17 @@ public class ApplicationPreferences {
     private final Preferences pref;
     private String[] languageSettings;
 
-    ApplicationPreferences() {
+    public ApplicationPreferences() {
         pref = Preferences.userNodeForPackage(this.getClass());
+        readPreferences();
     }
 
-    public void readPreferences() {
+    /**
+     * Read preferences
+     * If no preferences exist, a registry will be created
+     * Otherwise, they will be loaded from the registry
+     */
+    private void readPreferences() {
         Locale locale = Locale.getDefault();
         String[] value = {pref.get("language", "null"), pref.get("country", "null")};
         if (value[0].equals("null"))
@@ -23,9 +29,17 @@ public class ApplicationPreferences {
         languageSettings = value;
     }
 
+
+    /**
+     * Set local language preferences
+     * @param language language local code
+     * @param country country local code
+     */
     public void setPreferences(String language, String country) {
         pref.put("language", language);
         pref.put("country", country);
+        languageSettings[0] = language;
+        languageSettings[1] = country;
     }
 
     public String[] getLanguageSettings() {
