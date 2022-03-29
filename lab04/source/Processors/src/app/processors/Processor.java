@@ -1,4 +1,5 @@
 package app.processors;
+
 import app.status.StatusListener;
 
 public interface Processor {
@@ -8,8 +9,8 @@ public interface Processor {
      * @param task - tekst reprezentujący zadanie
      * @param sl   - słuchacz, który będzie informowany o statusie przetwarzania
      * @return - wartość logiczną mówiącą o tym, czy zadanie przyjęto do
-     *         przetwarzania (nie można zlecić kolejnych zadań dopóki bieżące
-     *         zadanie się nie zakończyło i nie został pobrany wynik przetwarzania
+     * przetwarzania (nie można zlecić kolejnych zadań dopóki bieżące
+     * zadanie się nie zakończyło i nie został pobrany wynik przetwarzania
      */
     boolean submitTask(String task, StatusListener sl);
 

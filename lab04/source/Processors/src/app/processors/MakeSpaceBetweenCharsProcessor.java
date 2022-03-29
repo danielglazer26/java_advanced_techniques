@@ -7,9 +7,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ToLowerCaseProcessor implements Processor, DefaultProcessorMethods {
+public class MakeSpaceBetweenCharsProcessor implements Processor, DefaultProcessorMethods {
     private String result;
-    private static int taskId;
+    private int taskId;
 
     @Override
     public boolean submitTask(String task, StatusListener sl) {
@@ -25,7 +25,7 @@ public class ToLowerCaseProcessor implements Processor, DefaultProcessorMethods 
 
     @Override
     public String getInfo() {
-        return "This class make all letters lower case";
+        return "This class make space between chars";
     }
 
     @Override
@@ -35,6 +35,11 @@ public class ToLowerCaseProcessor implements Processor, DefaultProcessorMethods 
 
     @Override
     public void makeTask(String task) {
-        result = task.toLowerCase();
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < task.length() - 1; i++) {
+            stringBuilder.append(task.charAt(i)).append(" ");
+        }
+        stringBuilder.append(task.charAt(task.length() - 1));
+        result = stringBuilder.toString();
     }
 }
