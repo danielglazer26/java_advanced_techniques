@@ -5,6 +5,8 @@ import app.loader.interfaces.ClassMethods;
 import app.status.MyStatusListener;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileSystemView;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -13,9 +15,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MainWindow extends JFrame implements ClassMethods {
     private DefaultListModel<String> listModelToUnload;
@@ -27,11 +32,11 @@ public class MainWindow extends JFrame implements ClassMethods {
     private JList listToLoad;
     private JButton addTaskButton;
     private JPanel contentPane;
+    private List<Path> pathList;
     private JList listInfo;
-    private List<Path> classFiles;
+    private JTextField taskText;
     private CustomClassLoader classLoader;
-    private final String path = "C:\\Pwr\\3 rok\\6 semestr\\ZT - " +
-            "Java\\dglazer_252743_java\\lab04\\source\\Processors\\out\\production\\Processors\\";
+    private String path;
 
     public MainWindow() {
         setContentPane(contentPane);
@@ -46,42 +51,56 @@ public class MainWindow extends JFrame implements ClassMethods {
         pack();
     }
 
+    private String actionChooseFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSystemView(FileSystemView.getFileSystemView());
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+        if (fileChooser.showOpenDialog(null) == 0) {
+            return fileChooser.getSelectedFile().toString();
+        }
+
+        return null;
+    }
+
     private void addTaskButtonAction() {
         addTaskButton.addActionListener(e -> {
-            Class <?> myClass = classLoader.getListClass().get(listToLoad.getSelectedIndex());
-            try {
-                Object o = ClassMethods.createObjectFromConstructor(myClass);
+            if (taskText.getText().length() > 0) {
+                Class<?> myClass = classLoader.getListClass().get(listToLoad.getSelectedIndex());
+                try {
+                    Object o = ClassMethods.createObjectFromConstructor(myClass);
 
-                Method submitTask = ClassMethods.createMethodSubmitTask(myClass);
-                MyStatusListener myStatusListener = new MyStatusListener((String) listToLoad.getSelectedValue());
-                submitTask.invoke(o, "Tekst na wejście", myStatusListener);
+                    Method submitTask = ClassMethods.createMethodSubmitTask(myClass);
+                    Method getResult = ClassMethods.createMethodGetResult(myClass);
 
-                Method getResult = ClassMethods.createMethodGetResult(myClass);
+                    MyStatusListener myStatusListener = new MyStatusListener((String) listToLoad.getSelectedValue());
 
-                ExecutorService executor = Executors.newSingleThreadExecutor();
+                    submitTask.invoke(o, taskText.getText(), myStatusListener);
 
-                executor.submit(() -> {
-                    String result = null;
-                    while (true) {
+
+                    ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+
+                    executor.scheduleAtFixedRate(() -> {
+                        String result = null;
                         try {
-                            Thread.sleep(800);
-
-                          result = (String) getResult.invoke(o);
-                        } catch (InterruptedException | IllegalArgumentException | IllegalAccessException | InvocationTargetException ex) {
+                            result = (String) getResult.invoke(o);
+                        } catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException ex) {
                             ex.printStackTrace();
                         }
                         if (result != null) {
                             myStatusListener.setResultLabel(result);
                             executor.shutdown();
-                            break;
                         }
-                    }
-                });
 
-            } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException ex) {
-                ex.printStackTrace();
+                    }, 1, 500, TimeUnit.MILLISECONDS);
+
+                } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
+
     }
 
     private void unloadButtonAction() {
@@ -96,7 +115,8 @@ public class MainWindow extends JFrame implements ClassMethods {
             classLoader = new CustomClassLoader(Paths.get(path));
             if (!listModelToLoad.isEmpty())
                 Arrays.stream(listModelToLoad.toArray()).forEach(l -> loadClassByName((String) l));
-
+            else
+                refreshClass();
         });
     }
 
@@ -116,14 +136,24 @@ public class MainWindow extends JFrame implements ClassMethods {
 
     private void loadClassByName(String classToLoad) {
 
-        Class<?> myClass =
-                classLoader.findClass("app.processors." + classToLoad.replace(".class", ""));
+        AtomicReference<String> packages = new AtomicReference<>("");
+        pathList.forEach(e -> {
+            if (e.getFileName().toString().equals(classToLoad)) {
+                packages.set(e.toString());
+                packages.set(packages.get().replace(path + "\\", ""));
+                packages.set(packages.get().replace(File.separatorChar, '.'));
+                packages.set(packages.get().replace(".class", ""));
+
+            }
+        });
+
+        Class<?> myClass = classLoader.findClass(packages.get());
         classLoader.addListClass(myClass);
 
         try {
             Object o = ClassMethods.createObjectFromConstructor(myClass);
             Method method = ClassMethods.createMethodGetInfo(myClass);
-            listInfoModel.addElement((String)method.invoke(o));
+            listInfoModel.addElement((String) method.invoke(o));
 
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException ex) {
             ex.printStackTrace();
@@ -131,28 +161,39 @@ public class MainWindow extends JFrame implements ClassMethods {
     }
 
     private List<Path> loadFileClass() throws IOException {
-        return Files.list(Paths.get(path + "app\\processors\\"))
-                .filter(Files::isRegularFile)
-                .filter(s -> s.toString().endsWith("class"))
-                .collect(Collectors.toList());
+        try (Stream<Path> pathStream = Files.walk(Paths.get(path))) {
+            return pathStream.filter(Files::isRegularFile)
+                    //.filter(s -> s.toString().endsWith("Processor.class"))
+                    .filter(s -> s.toString().endsWith(".class"))
+                    .collect(Collectors.toList());
+        }
     }
 
     private void createUIComponents() {
+        path = actionChooseFile();
+
         listModelToUnload = new DefaultListModel<>();
         listToUnload = new JList<>(listModelToUnload);
-        try {
-            classFiles = loadFileClass();
-            for (Path classFile : classFiles) {
-                listModelToUnload.addElement(classFile.getFileName().toString());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        refreshClass();
 
         listModelToLoad = new DefaultListModel<>();
         listToLoad = new JList<>(listModelToLoad);
 
         listInfoModel = new DefaultListModel<>();
         listInfo = new JList<>(listInfoModel);
+    }
+
+    private void refreshClass() {
+        try {
+            pathList = loadFileClass();
+            listModelToUnload.clear();
+            for (Path classFile : pathList) {
+                listModelToUnload.addElement(classFile.getFileName().toString());
+            }
+            pack();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

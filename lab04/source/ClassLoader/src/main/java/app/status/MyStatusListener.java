@@ -2,6 +2,7 @@ package app.status;
 
 
 import javax.swing.*;
+import java.util.Random;
 
 public class MyStatusListener extends JFrame implements StatusListener {
     private JPanel panel1;
@@ -16,6 +17,7 @@ public class MyStatusListener extends JFrame implements StatusListener {
         this.className = className;
         setVisible(true);
         setSize(400, 200);
+        this.setLocation(new Random().nextInt(1000), new Random().nextInt(1000));
     }
 
     public void setResultLabel(String result) {
