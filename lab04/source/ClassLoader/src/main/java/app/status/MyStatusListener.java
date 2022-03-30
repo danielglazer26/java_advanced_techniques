@@ -11,12 +11,14 @@ public class MyStatusListener extends JFrame implements StatusListener {
     private final String className;
 
 
-    public MyStatusListener(String className){
+    public MyStatusListener(String className) {
         setContentPane(panel1);
         this.className = className;
-        this.setVisible(true);
+        setVisible(true);
+        setSize(400, 200);
     }
-    public void setResultLabel(String result){
+
+    public void setResultLabel(String result) {
         resultLabel.setText("Result: " + result);
     }
 
@@ -24,6 +26,5 @@ public class MyStatusListener extends JFrame implements StatusListener {
     public void statusChanged(Status s) {
         taskIdLabel.setText(className + " task: " + s.getTaskId());
         progressTask.setValue(s.getProgress());
-        pack();
     }
 }

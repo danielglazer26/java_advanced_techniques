@@ -39,29 +39,14 @@ public class MainWindow extends JFrame implements ClassMethods {
 
         classLoader = new CustomClassLoader(Paths.get(path));
 
-        loadClassButton.addActionListener(e -> {
-            String classToLoad = (String) listToUnload.getSelectedValue();
+        loadButtonAction();
+        unloadButtonAction();
+        addTaskButtonAction();
 
-            listModelToLoad.addElement(classToLoad);
+        pack();
+    }
 
-            loadClassByName(classToLoad);
-
-            listModelToUnload.remove(listToUnload.getSelectedIndex());
-        });
-
-        unloadClassButton.addActionListener(e -> {
-            listModelToUnload.addElement((String) listToLoad.getSelectedValue());
-            listInfoModel.remove(listToLoad.getSelectedIndex());
-            listModelToLoad.remove(listToLoad.getSelectedIndex());
-
-            classLoader = null;
-            System.gc();
-
-            classLoader = new CustomClassLoader(Paths.get(path));
-            if (!listModelToLoad.isEmpty())
-                Arrays.stream(listModelToLoad.toArray()).forEach(l -> loadClassByName((String) l));
-
-        });
+    private void addTaskButtonAction() {
         addTaskButton.addActionListener(e -> {
             Class <?> myClass = classLoader.getListClass().get(listToLoad.getSelectedIndex());
             try {
@@ -86,8 +71,7 @@ public class MainWindow extends JFrame implements ClassMethods {
                             ex.printStackTrace();
                         }
                         if (result != null) {
-                            System.out.println(result);
-                            //myStatusListener.setResultLabel(result);
+                            myStatusListener.setResultLabel(result);
                             executor.shutdown();
                             break;
                         }
@@ -98,8 +82,36 @@ public class MainWindow extends JFrame implements ClassMethods {
                 ex.printStackTrace();
             }
         });
+    }
 
-        pack();
+    private void unloadButtonAction() {
+        unloadClassButton.addActionListener(e -> {
+            listModelToUnload.addElement((String) listToLoad.getSelectedValue());
+            listInfoModel.clear();
+            listModelToLoad.remove(listToLoad.getSelectedIndex());
+
+            classLoader = null;
+            System.gc();
+
+            classLoader = new CustomClassLoader(Paths.get(path));
+            if (!listModelToLoad.isEmpty())
+                Arrays.stream(listModelToLoad.toArray()).forEach(l -> loadClassByName((String) l));
+
+        });
+    }
+
+    private void loadButtonAction() {
+        loadClassButton.addActionListener(e -> {
+            String classToLoad = (String) listToUnload.getSelectedValue();
+
+            listModelToLoad.addElement(classToLoad);
+
+            loadClassByName(classToLoad);
+
+            listModelToUnload.remove(listToUnload.getSelectedIndex());
+
+            pack();
+        });
     }
 
     private void loadClassByName(String classToLoad) {

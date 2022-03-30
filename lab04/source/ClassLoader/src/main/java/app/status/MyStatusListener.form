@@ -24,7 +24,7 @@
               <orientation value="0"/>
             </properties>
           </component>
-          <component id="32791" class="javax.swing.JLabel" binding="taskIdLabel">
+          <component id="32791" class="javax.swing.JLabel" binding="resultLabel">
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -32,7 +32,7 @@
               <text value=""/>
             </properties>
           </component>
-          <component id="729a7" class="javax.swing.JLabel" binding="resultLabel">
+          <component id="729a7" class="javax.swing.JLabel" binding="taskIdLabel">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>

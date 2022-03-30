@@ -25,7 +25,6 @@ public interface DefaultProcessorMethods {
         scheduledExecutorServiceFinalize.scheduleAtFixedRate(() -> {
             if (ai.get() >= 100) {
                 makeTask(task);
-                System.out.println("finished");
                 scheduleFuture.cancel(true);
                 executorService.shutdown();
                 scheduledExecutorServiceFinalize.shutdown();
