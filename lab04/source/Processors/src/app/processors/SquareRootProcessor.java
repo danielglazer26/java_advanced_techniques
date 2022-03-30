@@ -1,5 +1,7 @@
 package app.processors;
 
+import app.processors.interfaces.DefaultProcessorMethods;
+import app.processors.interfaces.Processor;
 import app.status.StatusListener;
 
 import java.util.concurrent.Executors;

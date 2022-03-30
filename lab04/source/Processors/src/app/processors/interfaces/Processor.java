@@ -1,4 +1,4 @@
-package app.processors;
+package app.processors.interfaces;
 
 import app.status.StatusListener;
 

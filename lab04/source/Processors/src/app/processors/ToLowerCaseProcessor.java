@@ -1,5 +1,7 @@
 package app.processors;
 
+import app.processors.interfaces.DefaultProcessorMethods;
+import app.processors.interfaces.Processor;
 import app.status.StatusListener;
 
 import java.util.concurrent.Executors;
@@ -9,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ToLowerCaseProcessor implements Processor, DefaultProcessorMethods {
     private String result;
-    private static int taskId;
+    private static int taskId = 0;
 
     @Override
     public boolean submitTask(String task, StatusListener sl) {
