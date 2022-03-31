@@ -212,6 +212,7 @@ public class MainWindow extends JFrame implements ClassMethods {
         listInfo = new JList<>(listInfoModel);
     }
 
+
     private void refreshClass() {
         try {
             pathList = loadFileClass();
