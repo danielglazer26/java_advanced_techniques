@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public interface ClassMethods {
+
     static Method createMethodGetInfo(Class<?> loadedClass) throws NoSuchMethodException {
         return loadedClass.getDeclaredMethod("getInfo");
     }

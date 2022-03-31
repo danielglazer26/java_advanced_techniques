@@ -3,11 +3,11 @@ package app.status;
 public class Status {
 
     /**
-     * identyfikator zadania
+     * Task identifier
      */
     private final int taskId;
     /**
-     * postęp przetwarzania w procentach
+     * Processing progress in percent
      */
     private final int progress;
 

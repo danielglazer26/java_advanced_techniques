@@ -3,7 +3,7 @@ package app.status;
 public interface StatusListener {
 
     /**
-     * Metoda słuchacza
+     * Listener method
      *
      * @param s - status przetwarzania zadania
      */

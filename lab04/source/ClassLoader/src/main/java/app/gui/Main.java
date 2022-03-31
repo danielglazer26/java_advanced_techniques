@@ -11,7 +11,6 @@ public class Main {
             ex.printStackTrace();
         }
         JFrame.setDefaultLookAndFeelDecorated(true);
-        MainWindow mainWindow = new MainWindow();
-        mainWindow.setVisible(true);
+        new MainWindow().setVisible(true);
     }
 }

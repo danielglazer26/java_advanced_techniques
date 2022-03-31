@@ -28,16 +28,19 @@ public class MainWindow extends JFrame implements ClassMethods {
     private DefaultListModel<String> listInfoModel;
     private JButton loadClassButton;
     private JButton unloadClassButton;
-    private JList listToUnload;
-    private JList listToLoad;
+    private JList<?> listToUnload;
+    private JList<?> listToLoad;
     private JButton addTaskButton;
     private JPanel contentPane;
     private List<Path> pathList;
-    private JList listInfo;
+    private JList<?> listInfo;
     private JTextField taskText;
     private CustomClassLoader classLoader;
     private String path;
 
+    /**
+     * Constructs MainWindow
+     */
     public MainWindow() {
         setContentPane(contentPane);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -51,6 +54,10 @@ public class MainWindow extends JFrame implements ClassMethods {
         pack();
     }
 
+    /**
+     * Starts a fileChooser dialog
+     * @return directory to folder with classes
+     */
     private String actionChooseFile() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileSystemView(FileSystemView.getFileSystemView());
@@ -64,6 +71,9 @@ public class MainWindow extends JFrame implements ClassMethods {
         return null;
     }
 
+    /**
+     * Creates task for selected class from LoadedList
+     */
     private void addTaskButtonAction() {
         addTaskButton.addActionListener(e -> {
             if (taskText.getText().length() > 0) {
@@ -103,6 +113,9 @@ public class MainWindow extends JFrame implements ClassMethods {
 
     }
 
+    /**
+     * ActionListener to button which unload a class from application
+     */
     private void unloadButtonAction() {
         unloadClassButton.addActionListener(e -> {
             listModelToUnload.addElement((String) listToLoad.getSelectedValue());
@@ -120,6 +133,9 @@ public class MainWindow extends JFrame implements ClassMethods {
         });
     }
 
+    /**
+     * ActionListener to button which add a class to load
+     */
     private void loadButtonAction() {
         loadClassButton.addActionListener(e -> {
             String classToLoad = (String) listToUnload.getSelectedValue();
@@ -134,6 +150,10 @@ public class MainWindow extends JFrame implements ClassMethods {
         });
     }
 
+    /**
+     * Loads class by name and gets info about this class
+     * @param classToLoad Name of class in *.class format
+     */
     private void loadClassByName(String classToLoad) {
 
         AtomicReference<String> packages = new AtomicReference<>("");
@@ -152,14 +172,19 @@ public class MainWindow extends JFrame implements ClassMethods {
 
         try {
             Object o = ClassMethods.createObjectFromConstructor(myClass);
-            Method method = ClassMethods.createMethodGetInfo(myClass);
-            listInfoModel.addElement((String) method.invoke(o));
+            Method methodGetInfo = ClassMethods.createMethodGetInfo(myClass);
+            listInfoModel.addElement((String) methodGetInfo.invoke(o));
 
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException ex) {
             ex.printStackTrace();
         }
     }
 
+
+    /**
+     * Finds classes in the specified directory tree
+     * @return list of classes
+     */
     private List<Path> loadFileClass() throws IOException {
         try (Stream<Path> pathStream = Files.walk(Paths.get(path))) {
             return pathStream.filter(Files::isRegularFile)
@@ -169,6 +194,9 @@ public class MainWindow extends JFrame implements ClassMethods {
         }
     }
 
+    /**
+     * Creates gui components
+     */
     private void createUIComponents() {
         path = actionChooseFile();
 
@@ -191,9 +219,9 @@ public class MainWindow extends JFrame implements ClassMethods {
             for (Path classFile : pathList) {
                 listModelToUnload.addElement(classFile.getFileName().toString());
             }
-            pack();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        pack();
     }
 }
