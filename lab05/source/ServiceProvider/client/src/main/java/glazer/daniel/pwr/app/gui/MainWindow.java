@@ -8,8 +8,7 @@ import glazer.daniel.pwr.app.api.DataSet;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
+import javax.swing.table.DefaultTableModel;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -20,11 +19,11 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class MainWindow extends JFrame {
 
-    private DefaultListModel<String> listModelX, listModelY, listModelResults;
+    private DefaultTableModel tableModel;
+    private DefaultListModel<String>  listModelY, listModelResults;
     private ServiceLoader<AnalysisService> loader;
     private DataSet dataContainer;
     private JPanel panel1;
-    private JList<String> listX;
     private JList<String> listY;
     private JPanel listPanel;
     private JButton loadFileButton;
@@ -33,12 +32,13 @@ public class MainWindow extends JFrame {
     private JTextField optionsField;
     private JButton algorithmStartButton;
     private JList<String> list1;
+    private JTable table1;
     private String pathToFile;
 
     public MainWindow() {
         setContentPane(panel1);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
+        setSize(400, 100);
         dataContainer = new DataSet();
 
         loadFileButton.addActionListener(e -> {
@@ -54,29 +54,7 @@ public class MainWindow extends JFrame {
             pack();
         });
 
-        list1.addComponentListener(new ComponentListener() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                pack();
-            }
-
-            @Override
-            public void componentMoved(ComponentEvent e) {
-
-            }
-
-            @Override
-            public void componentShown(ComponentEvent e) {
-
-            }
-
-            @Override
-            public void componentHidden(ComponentEvent e) {
-
-            }
-        });
-
-        pack();
+        setSize(700, 200);
 
     }
 
@@ -102,8 +80,15 @@ public class MainWindow extends JFrame {
                 }
             }).start();
 
-        } catch (AnalysisException | NullPointerException ex) {
-            ex.printStackTrace();
+        } catch (AnalysisException  ex) {
+           JDialog d = new JDialog(this, "Exception");
+           JLabel label = new JLabel(ex.getMessage());
+           label.setHorizontalAlignment(SwingConstants.CENTER);
+           d.add(label);
+           d.setBounds(300, 300, 200, 100);
+           d.setVisible(true);
+        }catch (NullPointerException e){
+            e.printStackTrace();
         }
     }
 
@@ -125,12 +110,18 @@ public class MainWindow extends JFrame {
         return as;
     }
 
-    private void setLists(String[][] data) {
-        listModelX.clear();
-        listModelY.clear();
+    private void setInterfaceData(String[][] data, String[] headers) {
+        tableModel = new DefaultTableModel(data, headers){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        table1.setModel(tableModel);
 
-        Arrays.stream(data).forEach(strings -> listModelX.addElement(strings[0] + " " + strings[1]));
+        listModelY.clear();
         loader.forEach(analysisService -> listModelY.addElement(analysisService.getName()));
+
         pack();
     }
 
@@ -170,8 +161,7 @@ public class MainWindow extends JFrame {
             br.lines().forEach(s -> arrayList.add(s.split("\t")));
             String[][] data = arrayList.toArray(new String[0][0]);
 
-            setLists(data);
-            setListsLabels(headers);
+            setInterfaceData(data, headers);
 
             dataContainer.setData(data);
         } catch (IOException e) {
@@ -185,20 +175,9 @@ public class MainWindow extends JFrame {
         }
     }
 
-    private void setListsLabels(String[] headers) {
-        StringBuilder stringBuilder = new StringBuilder("");
-        for (int i = 0; i < headers.length - 1; i++) {
-            stringBuilder.append(headers[i]).append(" ");
-        }
-        stringBuilder.append(headers[headers.length - 1]);
-        label1.setText(stringBuilder.toString());
-    }
-
     private void createUIComponents() {
-        listModelX = new DefaultListModel<>();
         listModelY = new DefaultListModel<>();
         listModelResults = new DefaultListModel<>();
-        listX = new JList<>(listModelX);
         listY = new JList<>(listModelY);
         list1 = new JList<>(listModelResults);
     }
