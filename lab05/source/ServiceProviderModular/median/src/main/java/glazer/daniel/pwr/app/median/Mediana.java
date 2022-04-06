@@ -102,7 +102,6 @@ public class Mediana implements AnalysisService {
         if (dataThread.isAlive() || ds == null)
             return null;
 
-
         DataSet dataSet = new DataSet();
 
         String[] medians = makeCalculation();
