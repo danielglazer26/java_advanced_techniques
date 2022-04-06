@@ -1,4 +1,4 @@
-package ex.api;
+package glazer.daniel.pwr.app.api;
 
 public class DataSet {
     /**
@@ -7,7 +7,7 @@ public class DataSet {
      * oraz dane (dwuwymiarowa tablica, której wiersze reprezentują wektory danych).
      * Zakładamy, że będą zawsze istnieć przynajmniej dwie kolumny o nazwach:
      * "RecordId" - w kolumnie tej przechowywane są identyfikatory rekordów danych;
-     * "CategoryId" - w kolumnie tej przechowywane są identyfikatory kadegorii rekordów danych (wynik analizy skupień).
+     * "CategoryId" - w kolumnie tej przechowywane są identyfikatory kategorii rekordów danych (wynik analizy skupień).
      *
      * @author tkubik
      **/
