@@ -23,7 +23,7 @@ public class MainWindow extends JFrame {
     private DefaultListModel<String>  listModelY, listModelResults;
     private ServiceLoader<AnalysisService> loader;
     private DataSet dataContainer;
-    private JPanel panel1;
+    private JPanel contentPane;
     private JList<String> listY;
     private JPanel listPanel;
     private JButton loadFileButton;
@@ -36,7 +36,7 @@ public class MainWindow extends JFrame {
     private String pathToFile;
 
     public MainWindow() {
-        setContentPane(panel1);
+        setContentPane(contentPane);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(400, 100);
         dataContainer = new DataSet();
