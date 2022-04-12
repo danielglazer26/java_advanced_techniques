@@ -54,7 +54,7 @@ public interface IManager extends Remote { // port, nazwa, GUI
      * Metoda służąca do składania zamówienia wyświetlania ogłoszenia (wywoływana przez Klienta)
      *
      * @param order - szczegóły zamówienia (wraz z tekstem ogłoszenia, czasem jego wyświetlania i namiastką klienta)
-     * @return - zwraca true jeśli przyjęto zamówienie oraz false w przeciwnym wypadku
+     * @return - zwraca true, jeśli przyjęto zamówienie oraz false w przeciwnym wypadku
      * @throws RemoteException
      */
     public boolean placeOrder(Order order) throws RemoteException;
@@ -63,7 +63,7 @@ public interface IManager extends Remote { // port, nazwa, GUI
      * Metoda służąca do wycofywania zamówienia (wywoływana przez Klienta)
      *
      * @param orderId - numer wycofywanego zamówienia
-     * @return - zwraca true jeśli wycofano zamówienie oraz false w przeciwnym wypadku
+     * @return - zwraca true, jeśli wycofano zamówienie oraz false w przeciwnym wypadku
      * @throws RemoteException
      */
     public boolean withdrawOrder(int orderId) throws RemoteException;
