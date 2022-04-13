@@ -20,7 +20,7 @@ public class ClientWindow extends JFrame {
         setContentPane(contentPane);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        this.client= client;
+        this.client = client;
 
         createNewOrderButton.addActionListener(e -> {
             try {
@@ -33,7 +33,7 @@ public class ClientWindow extends JFrame {
 
         deleteOrderButton.addActionListener(e -> {
             try {
-                client.deleteOrder((Integer)tableOrderModel.getValueAt(orderClientTable.getSelectedRow(), 0));
+                client.deleteOrder((Integer) tableOrderModel.getValueAt(orderClientTable.getSelectedRow(), 0));
             } catch (RemoteException ex) {
                 ex.printStackTrace();
             }
@@ -59,13 +59,17 @@ public class ClientWindow extends JFrame {
 
     public void updateOrderTable() {
         tableOrderModel.setRowCount(0);
-        client.getOrders().forEach((integer, order) -> tableOrderModel.addRow(new Object[]{integer, order.advertText,
-                order.displayPeriod.toSeconds()}));
+        client.getOrders().forEach((integer, order) -> tableOrderModel
+                .addRow(new Object[]{
+                        integer,
+                        order.advertText,
+                        order.displayPeriod.toSeconds()
+                }));
 
     }
 
 
-    public void buttonActivation(boolean enable){
+    public void buttonActivation(boolean enable) {
         createNewOrderButton.setEnabled(enable);
     }
 }

@@ -4,22 +4,22 @@ import javax.swing.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.rmi.RemoteException;
+import java.time.Duration;
 
 public class BillboardWindow extends JFrame {
     private JPanel panel1;
     private JButton deleteButton;
     private JButton setButton;
     private JTextField tableSize;
-    private Billboard billboard;
+    private JLabel advertisementLabel;
+    private final Billboard billboard;
 
     public BillboardWindow(Billboard billboard) {
         setContentPane(panel1);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.billboard = billboard;
 
-        setButton.addActionListener(e -> {
-            billboard.setBillboardID();
-        });
+        setButton.addActionListener(e -> billboard.setBillboardID());
 
         deleteButton.addActionListener(e -> {
             try {
@@ -35,7 +35,7 @@ public class BillboardWindow extends JFrame {
                 try {
                     if (KeyEvent.VK_ENTER == e.getKeyCode())
                         billboard.setTableCapacity(Integer.parseInt(tableSize.getText()));
-                }catch (NumberFormatException ex){
+                } catch (NumberFormatException ex) {
                     System.out.println("Błędny format liczbowy");
                 }
             }
@@ -43,6 +43,19 @@ public class BillboardWindow extends JFrame {
 
         pack();
     }
+
+    public void setLabelAdvertisement(Duration time) {
+        Advertisement a = billboard.getQueue().poll();
+        a.setUsedTime(Duration.ofSeconds(a.getUsedTime().toSeconds() + time.toSeconds()));
+        if (a.getUsedTime().toSeconds() < a.getDisplayPeriod().toSeconds()) {
+            advertisementLabel.setText(a.getAdvertisementText());
+            billboard.addToQueue(a);
+        } else
+            advertisementLabel.setText(" ");
+
+        pack();
+    }
+
 
     @Override
     public void dispose() {

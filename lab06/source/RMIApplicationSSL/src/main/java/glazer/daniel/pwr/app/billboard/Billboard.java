@@ -4,6 +4,7 @@ import glazer.daniel.pwr.api.billboards.IBillboard;
 import glazer.daniel.pwr.api.billboards.IManager;
 import glazer.daniel.pwr.factory.CustomRMIClientSocketFactory;
 
+import javax.swing.*;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.rmi.RemoteException;
@@ -12,6 +13,8 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Billboard extends UnicastRemoteObject implements IBillboard, Serializable {
 
@@ -23,9 +26,10 @@ public class Billboard extends UnicastRemoteObject implements IBillboard, Serial
     private int tableCapacity;
     private Duration displayInterval;
     private final BillboardWindow billboardWindow;
-
+    private Thread advertiseThread = new Thread();
 
     private final HashMap<Integer, Advertisement> advertisements = new HashMap<>();
+    private Queue<Advertisement> queue;
 
     protected Billboard() throws RemoteException {
         super();
@@ -36,9 +40,18 @@ public class Billboard extends UnicastRemoteObject implements IBillboard, Serial
 
     public static void main(String[] args) {
         try {
+            UIManager.setLookAndFeel("com.formdev.flatlaf.FlatDarculaLaf");
+            JFrame.setDefaultLookAndFeelDecorated(true);
+        } catch (UnsupportedLookAndFeelException
+                | ClassNotFoundException
+                | InstantiationException
+                | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        try {
             new Billboard().makeConnection();
-        } catch (RemoteException ignored) {
-
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
     }
 
@@ -75,7 +88,6 @@ public class Billboard extends UnicastRemoteObject implements IBillboard, Serial
 
     }
 
-
     @Override
     public boolean addAdvertisement(String advertText, Duration displayPeriod, int orderId) throws RemoteException {
         if (tableCapacity - advertisements.size() > 0) {
@@ -89,6 +101,11 @@ public class Billboard extends UnicastRemoteObject implements IBillboard, Serial
     public boolean removeAdvertisement(int orderId) throws RemoteException {
         try {
             advertisements.remove(orderId);
+            if (advertiseThread.isAlive()) {
+                stop();
+                start();
+            }
+
             return true;
         } catch (Exception e) {
             return false;
@@ -107,23 +124,60 @@ public class Billboard extends UnicastRemoteObject implements IBillboard, Serial
 
     @Override
     public boolean start() throws RemoteException {
-        return false;
+        if (!advertiseThread.isInterrupted()) {
+            queue = new LinkedList<>(advertisements.values());
+            if (queue.isEmpty())
+                queue = null;
+            advertiseThread = new Thread(() -> {
+                while (true) {
+                    try {
+                        if (queue != null) {
+                            if (queue.size() > 0) {
+                                billboardWindow.setLabelAdvertisement(displayInterval);
+                                Thread.sleep(displayInterval.toMillis());
+                            } else {
+                                JDialog d = new JDialog(billboardWindow.getOwner(), "Time expired");
+                                JLabel label = new JLabel("Advertisement time is over");
+                                label.setHorizontalAlignment(SwingConstants.CENTER);
+                                d.add(label);
+                                d.setBounds(300, 300, 200, 100);
+                                d.setVisible(true);
+                                break;
+                            }
+                        } else
+                            break;
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            advertiseThread.start();
+            return true;
+        } else
+            return false;
     }
 
     @Override
     public boolean stop() throws RemoteException {
-        return false;
+        try {
+            queue = null;
+            advertiseThread.join();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
-    public Duration getDisplayInterval() {
-        return displayInterval;
-    }
-
-    public int getTableCapacity() {
-        return tableCapacity;
-    }
 
     public void setTableCapacity(int tableCapacity) {
         this.tableCapacity = tableCapacity;
+    }
+
+    public Queue<Advertisement> getQueue() {
+        return queue;
+    }
+
+    public void addToQueue(Advertisement advertisement) {
+        queue.add(advertisement);
     }
 }

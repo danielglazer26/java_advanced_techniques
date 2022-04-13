@@ -4,15 +4,21 @@ import glazer.daniel.pwr.api.billboards.Order;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.rmi.RemoteException;
+import java.time.Duration;
+import java.time.format.DateTimeParseException;
 
 public class ManagerWindow extends JFrame {
     private DefaultTableModel tableOrderModel, tableBillboardModel;
     private JPanel panel1;
-    private JButton addAdvertiseButton;
-    private JButton deleteAdvertiseButton;
     private JTable billboardsTable;
     private JTable ordersTable;
+    private JButton startButton;
+    private JButton stopButton;
+    private JTextField displayIntervalField;
+    private JDialog dialog;
 
     private final Manager manager;
 
@@ -22,27 +28,65 @@ public class ManagerWindow extends JFrame {
 
         this.manager = manager;
 
-        addAdvertiseButton.addActionListener(e -> {
-            try {
-                Integer a = (Integer) tableOrderModel.getValueAt(ordersTable.getSelectedRow(), 0);
-                System.out.println(a);
-                Order order = manager.getOrders().get(a);
-                manager.getBillboards().get(1).addAdvertisement(order.advertText, order.displayPeriod, a);
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            }
-        });
-        deleteAdvertiseButton.addActionListener(e -> {
-            try {
-                manager.getBillboards().get(1).removeAdvertisement(1);
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            }
-        });
 
+        startButton.addActionListener(e -> {
+            try {
+                if (manager.getBillboards().get(getBillboardIdFromTable()).start())
+                    createJDialog("Billboard started");
+                else
+                    throw new Exception();
+            } catch (RemoteException ex) {
+                ex.printStackTrace();
+            } catch (Exception exception) {
+                createJDialog("Something go wrong");
+            }
+        });
+        stopButton.addActionListener(e -> {
+            try {
+                if (manager.getBillboards().get(getBillboardIdFromTable()).stop())
+                    createJDialog("Billboard stopped");
+                else
+                    throw new Exception();
+            } catch (RemoteException ex) {
+                ex.printStackTrace();
+            } catch (Exception exception) {
+                createJDialog("Something go wrong");
+            }
+        });
         createOrderTable();
         createBillboardTable();
         pack();
+
+        displayIntervalField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (KeyEvent.VK_ENTER == e.getKeyCode()) {
+                    try {
+                        manager.getBillboards()
+                                .get(getBillboardIdFromTable())
+                                .setDisplayInterval(Duration
+                                        .ofSeconds(Integer.parseInt(displayIntervalField.getText())));
+                    } catch (RemoteException ex) {
+                        ex.printStackTrace();
+                    } catch (DateTimeParseException exception) {
+                        System.out.println("Zły format czasu");
+                    }
+                }
+            }
+        });
+    }
+
+    private void createJDialog(String text) {
+        dialog = new JDialog(this, "Information");
+        JLabel label = new JLabel(text);
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        dialog.add(label);
+        dialog.setBounds(300, 300, 200, 100);
+        dialog.setVisible(true);
+    }
+
+    private Integer getBillboardIdFromTable() {
+        return (Integer) tableBillboardModel.getValueAt(billboardsTable.getSelectedRow(), 0);
     }
 
     private void createOrderTable() {
@@ -69,6 +113,8 @@ public class ManagerWindow extends JFrame {
         };
         tableBillboardModel.addColumn("Billboard ID");
         tableBillboardModel.addColumn("IBillboard");
+        tableBillboardModel.addColumn("Table buffer");
+        tableBillboardModel.addColumn("Free space");
         billboardsTable.setModel(tableBillboardModel);
 
     }
@@ -82,8 +128,15 @@ public class ManagerWindow extends JFrame {
 
     public void updateBillboardTable() {
         tableBillboardModel.setRowCount(0);
-        manager.getBillboards().forEach((integer, billboard) -> tableBillboardModel.addRow(new Object[]{integer,
-                billboard.hashCode()}));
+        manager.getBillboards().forEach((integer, billboard) -> {
+            try {
+                int[] table = billboard.getCapacity();
+                tableBillboardModel.addRow(new Object[]{integer,
+                        billboard.hashCode(), table[0], table[1]});
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        });
 
     }
 }

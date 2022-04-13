@@ -5,6 +5,7 @@ import glazer.daniel.pwr.api.billboards.IManager;
 import glazer.daniel.pwr.api.billboards.Order;
 import glazer.daniel.pwr.factory.CustomRMIClientSocketFactory;
 
+import javax.swing.*;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.rmi.RemoteException;
@@ -21,7 +22,8 @@ public class Client extends UnicastRemoteObject implements IClient, Serializable
     private IManager iManager;
     private final HashMap<Integer, Order> orders = new HashMap<>();
     private final ClientWindow clientWindow;
-    private final Order order = new Order();
+    private Order order;
+    private Thread thread;
 
 
     protected Client() throws RemoteException {
@@ -31,6 +33,15 @@ public class Client extends UnicastRemoteObject implements IClient, Serializable
     }
 
     public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel("com.formdev.flatlaf.FlatDarculaLaf");
+            JFrame.setDefaultLookAndFeelDecorated(true);
+        } catch (UnsupportedLookAndFeelException
+                | ClassNotFoundException
+                | InstantiationException
+                | IllegalAccessException e) {
+            e.printStackTrace();
+        }
         try {
             new Client().makeConnection();
         } catch (RemoteException e) {
@@ -60,41 +71,44 @@ public class Client extends UnicastRemoteObject implements IClient, Serializable
     @Override
     public void setOrderId(int orderId) throws RemoteException {
         orders.put(orderId, order);
+        clientWindow.updateOrderTable();
     }
+
     public void deleteOrder(int orderID) throws RemoteException {
-        if(iManager.withdrawOrder(orderID)) {
+        if (iManager.withdrawOrder(orderID)) {
             orders.remove(orderID);
             clientWindow.updateOrderTable();
         }
     }
 
     public void createOrder(String text, String billboardTime) throws RemoteException {
+        order = new Order();
         order.client = this;
         order.advertText = text;
         order.displayPeriod = Duration.ofSeconds(Integer.parseInt(billboardTime));
 
-        runCallback();
+        runCallback(order);
 
-        if(iManager.placeOrder(order))
-            clientWindow.updateOrderTable();
     }
 
-    private void runCallback() {
-        new Thread(() -> {
-            int size = orders.size();
+    private void runCallback(Order order) {
+        thread = new Thread(() -> {
+            Boolean bl;
             while (true) {
                 try {
-                    Thread.sleep(200);
-                    if (orders.size() > size) {
+                    bl = iManager.placeOrder(order);
+                    if (bl != null) {
                         clientWindow.buttonActivation(true);
                         break;
                     }
-                } catch (InterruptedException e) {
+                    Thread.sleep(200);
+                } catch (InterruptedException | RemoteException e) {
                     e.printStackTrace();
                 }
 
             }
-        }).start();
+        });
+        thread.start();
     }
 
     public HashMap<Integer, Order> getOrders() {
