@@ -133,7 +133,7 @@ public class Billboard extends UnicastRemoteObject implements IBillboard, Serial
                     try {
                         if (queue != null) {
                             if (queue.size() > 0) {
-                                billboardWindow.setLabelAdvertisement(displayInterval);
+                                billboardWindow.setLabelAdvertisement(displayInterval, "");
                                 Thread.sleep(displayInterval.toMillis());
                             } else {
                                 JDialog d = new JDialog(billboardWindow.getOwner(), "Time expired");
@@ -162,6 +162,7 @@ public class Billboard extends UnicastRemoteObject implements IBillboard, Serial
         try {
             queue = null;
             advertiseThread.join();
+            billboardWindow.setLabelAdvertisement(Duration.ZERO, "");
             return true;
         } catch (Exception e) {
             return false;

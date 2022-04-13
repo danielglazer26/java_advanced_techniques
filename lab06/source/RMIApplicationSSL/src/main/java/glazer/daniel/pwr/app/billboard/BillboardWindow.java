@@ -44,14 +44,14 @@ public class BillboardWindow extends JFrame {
         pack();
     }
 
-    public void setLabelAdvertisement(Duration time) {
+    public void setLabelAdvertisement(Duration time, String text) {
         Advertisement a = billboard.getQueue().poll();
         a.setUsedTime(Duration.ofSeconds(a.getUsedTime().toSeconds() + time.toSeconds()));
         if (a.getUsedTime().toSeconds() < a.getDisplayPeriod().toSeconds()) {
             advertisementLabel.setText(a.getAdvertisementText());
             billboard.addToQueue(a);
         } else
-            advertisementLabel.setText(" ");
+            advertisementLabel.setText(text);
 
         pack();
     }

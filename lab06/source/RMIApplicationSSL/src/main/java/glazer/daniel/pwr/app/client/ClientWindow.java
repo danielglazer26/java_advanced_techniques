@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 public class ClientWindow extends JFrame {
     private DefaultTableModel tableOrderModel;
@@ -18,7 +19,7 @@ public class ClientWindow extends JFrame {
 
     public ClientWindow(Client client) throws HeadlessException {
         setContentPane(contentPane);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         this.client = client;
 
@@ -66,6 +67,21 @@ public class ClientWindow extends JFrame {
                         order.displayPeriod.toSeconds()
                 }));
 
+    }
+
+    @Override
+    public void dispose() {
+        ArrayList<Integer> list = new ArrayList<>(client.getOrders().keySet());
+
+        list.forEach((i) -> {
+            try {
+                client.deleteOrder(i);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        });
+
+        System.exit(0);
     }
 
 

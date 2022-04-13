@@ -1,7 +1,5 @@
 package glazer.daniel.pwr.app.manager;
 
-import glazer.daniel.pwr.api.billboards.Order;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.KeyAdapter;
@@ -18,7 +16,6 @@ public class ManagerWindow extends JFrame {
     private JButton startButton;
     private JButton stopButton;
     private JTextField displayIntervalField;
-    private JDialog dialog;
 
     private final Manager manager;
 
@@ -77,7 +74,7 @@ public class ManagerWindow extends JFrame {
     }
 
     private void createJDialog(String text) {
-        dialog = new JDialog(this, "Information");
+        JDialog dialog = new JDialog(this, "Information");
         JLabel label = new JLabel(text);
         label.setHorizontalAlignment(SwingConstants.CENTER);
         dialog.add(label);
