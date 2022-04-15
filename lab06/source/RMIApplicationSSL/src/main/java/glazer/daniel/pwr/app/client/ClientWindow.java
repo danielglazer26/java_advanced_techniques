@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class ClientWindow extends JFrame {
     private DefaultTableModel tableOrderModel;
-    private JPanel contentPane;
+    private JPanel panel;
     private JTextField billboardText;
     private JTextField duration;
     private JButton createNewOrderButton;
@@ -18,7 +18,7 @@ public class ClientWindow extends JFrame {
     private final Client client;
 
     public ClientWindow(Client client) throws HeadlessException {
-        setContentPane(contentPane);
+        setContentPane(panel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         this.client = client;

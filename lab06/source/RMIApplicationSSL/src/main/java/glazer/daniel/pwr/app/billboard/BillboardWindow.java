@@ -7,7 +7,7 @@ import java.rmi.RemoteException;
 import java.time.Duration;
 
 public class BillboardWindow extends JFrame {
-    private JPanel panel1;
+    private JPanel contentPane;
     private JButton deleteButton;
     private JButton setButton;
     private JTextField tableSize;
@@ -15,7 +15,7 @@ public class BillboardWindow extends JFrame {
     private final Billboard billboard;
 
     public BillboardWindow(Billboard billboard) {
-        setContentPane(panel1);
+        setContentPane(contentPane);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.billboard = billboard;
 

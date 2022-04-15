@@ -10,7 +10,7 @@ import java.time.format.DateTimeParseException;
 
 public class ManagerWindow extends JFrame {
     private DefaultTableModel tableOrderModel, tableBillboardModel;
-    private JPanel panel1;
+    private JPanel panel;
     private JTable billboardsTable;
     private JTable ordersTable;
     private JButton startButton;
@@ -20,7 +20,7 @@ public class ManagerWindow extends JFrame {
     private final Manager manager;
 
     public ManagerWindow(Manager manager) {
-        setContentPane(panel1);
+        setContentPane(panel);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         this.manager = manager;

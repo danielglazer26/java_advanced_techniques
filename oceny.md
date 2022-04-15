@@ -6,3 +6,9 @@
 * Ocena: 5.0
 # lab04
 * Ocena: 5.0-
+# lab05
+* Ocena: 5.0
+# lab06
+* Ocena: 5.0
+# lab07
+* Ocena: 
