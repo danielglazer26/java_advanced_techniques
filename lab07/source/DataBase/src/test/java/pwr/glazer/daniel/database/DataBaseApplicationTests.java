@@ -1,4 +1,4 @@
-package pwr.glazer.daniel.DataBase;
+package pwr.glazer.daniel.database;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
