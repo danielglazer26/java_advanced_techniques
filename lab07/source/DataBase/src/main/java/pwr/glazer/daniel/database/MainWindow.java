@@ -59,37 +59,41 @@ public class MainWindow extends JFrame {
         this.paymentService = paymentService;
         this.repaymentService = repaymentService;
 
+        createUserInterface();
 
         applicationDate = Date.valueOf(LocalDate.now());
         dateLabel.setText(applicationDate.toString());
 
-        createSimulationComponents();
-
-        setContentPane(panel1);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        createTables();
-
         loadDataFromFiles(eventService, personService, paymentService, repaymentService);
 
-        createRefreshButton();
-        createAddButton(eventService, personService, paymentService, repaymentService);
-        createLoadButton(eventService, personService, paymentService, repaymentService);
-        createNextDayButton();
+    }
 
-        pack();
+    private void createUserInterface() {
+        try {
+            UIManager.setLookAndFeel("com.formdev.flatlaf.FlatDarculaLaf");
+            setDefaultLookAndFeelDecorated(true);
+
+            setContentPane(panel1);
+            setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+            createSimulationComponents();
+            createTables();
+
+            createRefreshButton();
+            createAddButton(eventService, personService, paymentService, repaymentService);
+            createLoadButton(eventService, personService, paymentService, repaymentService);
+            createNextDayButton();
+
+            SwingUtilities.updateComponentTreeUI(rootPane);
+            pack();
+
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
     }
 
     private void createSimulationComponents() {
-        simulation = new Thread(() -> {
-            while (running) {
-                updateDate();
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(startButton);
         buttonGroup.add(stopButton);
@@ -97,6 +101,16 @@ public class MainWindow extends JFrame {
 
         startButton.addActionListener(e -> {
             running = true;
+            simulation = new Thread(() -> {
+                while (running) {
+                    updateDate();
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            });
             simulation.start();
         });
         stopButton.addActionListener(e -> {
@@ -109,7 +123,10 @@ public class MainWindow extends JFrame {
         });
     }
 
-    private void loadDataFromFiles(EventService eventService, PersonService personService, PaymentService paymentService, RepaymentService repaymentService) {
+    private void loadDataFromFiles(EventService eventService,
+                                   PersonService personService,
+                                   PaymentService paymentService,
+                                   RepaymentService repaymentService) {
         ReadFromFile.startFileChooser(
                 0,
                 "C:\\Pwr\\3 rok\\6 semestr\\ZT - Java\\dglazer_252743_java\\lab07\\source\\DataBase\\wyd.csv",
@@ -133,9 +150,7 @@ public class MainWindow extends JFrame {
     }
 
     private void createNextDayButton() {
-        nextDay.addActionListener(e -> {
-            updateDate();
-        });
+        nextDay.addActionListener(e -> updateDate());
     }
 
     private void remindAboutMoney() {
@@ -196,20 +211,20 @@ public class MainWindow extends JFrame {
                     personService.savePerson(new Person(strings[0], strings[1]));
                     break;
                 case 2:
+                    repaymentService.saveRepayment(new Repayment(
+                            eventService.getByEventID(Integer.parseInt(strings[0])),
+                            Integer.parseInt(strings[1]),
+                            Date.valueOf(LocalDate.parse(strings[2], DateTimeFormatter.ofPattern("dd.MM.yyyy"))),
+                            Double.parseDouble(strings[3])));
+                    break;
+
+                case 3:
                     paymentService.savePayment(new Payment(
                             Date.valueOf(LocalDate.parse(strings[0], DateTimeFormatter.ofPattern("dd.MM.yyyy"))),
                             Double.parseDouble(strings[1]),
                             personService.getByPersonID(Integer.parseInt(strings[2])),
                             eventService.getByEventID(Integer.parseInt(strings[3])),
                             repaymentService.getByRepaymentID(Integer.parseInt(strings[4]))));
-                    break;
-
-                case 3:
-                    repaymentService.saveRepayment(new Repayment(
-                            eventService.getByEventID(Integer.parseInt(strings[0])),
-                            Integer.parseInt(strings[1]),
-                            Date.valueOf(LocalDate.parse(strings[2], DateTimeFormatter.ofPattern("dd.MM.yyyy"))),
-                            Double.parseDouble(strings[3])));
                     break;
 
             }
@@ -284,7 +299,6 @@ public class MainWindow extends JFrame {
                         e.getPersonID().getPersonID(),
                         e.getEventID().getEventID(),
                         e.getRepayment().getRepaymentID()}));
-        pack();
     }
 
     private void createEventTable() {
