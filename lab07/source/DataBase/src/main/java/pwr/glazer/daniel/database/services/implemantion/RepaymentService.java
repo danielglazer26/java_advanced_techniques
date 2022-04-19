@@ -32,13 +32,18 @@ public class RepaymentService implements RepaymentServiceInterface {
     }
 
     @Override
+    public List<Repayment> getAllByPaymentTimeEquals(Date paymentTime) {
+        return repaymentRepository.getAllByPaymentTimeEquals(paymentTime);
+    }
+
+    @Override
     public Repayment getByRepaymentID(int repaymentID) {
         return repaymentRepository.getByRepaymentID(repaymentID);
     }
 
     @Override
     public void saveAllRepayments(List<Repayment> repayments) {
-            repaymentRepository.saveAll(repayments);
+        repaymentRepository.saveAll(repayments);
     }
 
     @Override

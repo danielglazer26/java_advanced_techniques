@@ -8,6 +8,9 @@ import java.util.List;
 public interface RepaymentServiceInterface {
     List<Repayment> findAllRepayments();
     List<Repayment> getByPaymentTimeBefore(Date paymentTime);
+
+    List<Repayment> getAllByPaymentTimeEquals(Date paymentTime);
+
     Repayment getByRepaymentID(int repaymentID);
     void saveAllRepayments(List<Repayment> repayments);
     void saveRepayment(Repayment repayment);

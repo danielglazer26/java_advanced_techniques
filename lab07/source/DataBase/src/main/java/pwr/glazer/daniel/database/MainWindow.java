@@ -20,11 +20,11 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.List;
 
 @SpringBootApplication
 public class MainWindow extends JFrame {
 
+    private boolean running = false;
     private ArrayList<DefaultTableModel> defaultTableModelArrayList;
     private final EventService eventService;
     private final PersonService personService;
@@ -45,22 +45,71 @@ public class MainWindow extends JFrame {
     private JButton nextDay;
     private Date applicationDate;
     private JTextArea logsField;
+    private JRadioButton startButton;
+    private JRadioButton stopButton;
+    private Thread simulation;
 
     @Autowired
-    public MainWindow(EventService eventService, PersonService personService, PaymentService paymentService, RepaymentService repaymentService) {
+    public MainWindow(EventService eventService,
+                      PersonService personService,
+                      PaymentService paymentService,
+                      RepaymentService repaymentService) {
         this.eventService = eventService;
         this.personService = personService;
         this.paymentService = paymentService;
         this.repaymentService = repaymentService;
 
+
         applicationDate = Date.valueOf(LocalDate.now());
         dateLabel.setText(applicationDate.toString());
 
+        createSimulationComponents();
+
         setContentPane(panel1);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-
         createTables();
 
+        loadDataFromFiles(eventService, personService, paymentService, repaymentService);
+
+        createRefreshButton();
+        createAddButton(eventService, personService, paymentService, repaymentService);
+        createLoadButton(eventService, personService, paymentService, repaymentService);
+        createNextDayButton();
+
+        pack();
+    }
+
+    private void createSimulationComponents() {
+        simulation = new Thread(() -> {
+            while (running) {
+                updateDate();
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup.add(startButton);
+        buttonGroup.add(stopButton);
+        stopButton.setSelected(true);
+
+        startButton.addActionListener(e -> {
+            running = true;
+            simulation.start();
+        });
+        stopButton.addActionListener(e -> {
+            running = false;
+            try {
+                simulation.join();
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        });
+    }
+
+    private void loadDataFromFiles(EventService eventService, PersonService personService, PaymentService paymentService, RepaymentService repaymentService) {
         ReadFromFile.startFileChooser(
                 0,
                 "C:\\Pwr\\3 rok\\6 semestr\\ZT - Java\\dglazer_252743_java\\lab07\\source\\DataBase\\wyd.csv",
@@ -81,43 +130,51 @@ public class MainWindow extends JFrame {
                 personService,
                 eventService,
                 repaymentService);
+    }
 
-        createRefreshButton();
-        createAddButton(eventService, personService, paymentService, repaymentService);
-        createLoadButton(eventService, personService, paymentService, repaymentService);
-
+    private void createNextDayButton() {
         nextDay.addActionListener(e -> {
             updateDate();
-            remindAboutMoney();
-            checkNoPay();
         });
-        pack();
     }
 
     private void remindAboutMoney() {
+        repaymentService.getAllByPaymentTimeEquals(Date.valueOf(applicationDate.toLocalDate().plusDays(7)))
+                .forEach(repayment -> personService.findAllPeople().forEach(person -> {
+                    if (!paymentService.existsByRepaymentAndAndPersonID(repayment, person))
+                        logsField.setText(logsField.getText()
+                                + "Log from: "
+                                + applicationDate.toString()
+                                + ": " + person.getName()
+                                + " " + person.getSurname()
+                                + " " + repayment.getEvent().getName()
+                                + " " + repayment.getValue()
+                                + " Remind about payment time: " + repayment.getPaymentTime().toString()
+                                + "\n");
+                }));
     }
 
     private void checkNoPay() {
-        List<Person> people = personService.findAllPeople();
-        repaymentService.getByPaymentTimeBefore(applicationDate).forEach(repayment -> {
-            people.forEach(person -> {
-                if(!paymentService.existsByRepaymentAndAndPersonID(repayment, person))
-                    logsField.setText(logsField.getText()
-                            + "Log from: "
-                            + applicationDate.toString()
-                            + ": " + person.getName()
-                            + " " + person.getSurname()
-                            + " " + repayment.getEvent().getName()
-                            + " " + repayment.getValue()
-                            + " Payment time: " + repayment.getPaymentTime().toString()
-                            + "\n");
-            });
-        });
+        repaymentService.getByPaymentTimeBefore(applicationDate)
+                .forEach(repayment -> personService.findAllPeople().forEach(person -> {
+                    if (!paymentService.existsByRepaymentAndAndPersonID(repayment, person))
+                        logsField.setText(logsField.getText()
+                                + "Log from: "
+                                + applicationDate.toString()
+                                + ": " + person.getName()
+                                + " " + person.getSurname()
+                                + " " + repayment.getEvent().getName()
+                                + " " + repayment.getValue()
+                                + " Payment time: " + repayment.getPaymentTime().toString()
+                                + "\n");
+                }));
     }
 
     private void updateDate() {
         applicationDate = Date.valueOf(applicationDate.toLocalDate().plusDays(1));
         dateLabel.setText(applicationDate.toString());
+        remindAboutMoney();
+        checkNoPay();
     }
 
     private void createRefreshButton() {
@@ -270,7 +327,6 @@ public class MainWindow extends JFrame {
                 .headless(false).run(args);
 
         EventQueue.invokeLater(() -> {
-
             var ex = ctx.getBean(MainWindow.class);
             ex.setVisible(true);
         });

@@ -10,5 +10,7 @@ import java.util.List;
 public interface RepaymentRepository extends CrudRepository<Repayment,Integer>{
     Repayment getByRepaymentID(int repaymentID);
     List<Repayment> getByPaymentTimeBefore(Date paymentTime);
+
+    List<Repayment> getAllByPaymentTimeEquals(Date paymentTime);
 }
 
