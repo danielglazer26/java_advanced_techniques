@@ -30,7 +30,7 @@ public class MainWindow extends JFrame {
     private final PersonService personService;
     private final PaymentService paymentService;
     private final RepaymentService repaymentService;
-    private JPanel panel1;
+    private JPanel contentPane;
     private JPanel mainPanel;
     private JTable eventTable;
     private JTable personTable;
@@ -49,6 +49,9 @@ public class MainWindow extends JFrame {
     private JRadioButton stopButton;
     private Thread simulation;
 
+    /**
+     * Initializes services and graphic interface
+     */
     @Autowired
     public MainWindow(EventService eventService,
                       PersonService personService,
@@ -68,12 +71,15 @@ public class MainWindow extends JFrame {
 
     }
 
+    /**
+     * Creates  graphic interface
+     */
     private void createUserInterface() {
         try {
             UIManager.setLookAndFeel("com.formdev.flatlaf.FlatDarculaLaf");
             setDefaultLookAndFeelDecorated(true);
 
-            setContentPane(panel1);
+            setContentPane(contentPane);
             setDefaultCloseOperation(EXIT_ON_CLOSE);
 
             createSimulationComponents();
@@ -92,6 +98,9 @@ public class MainWindow extends JFrame {
         }
     }
 
+    /**
+     * Creates components of simulation
+     */
     private void createSimulationComponents() {
 
         ButtonGroup buttonGroup = new ButtonGroup();
@@ -123,6 +132,9 @@ public class MainWindow extends JFrame {
         });
     }
 
+    /**
+     * Loads data from file
+     */
     private void loadDataFromFiles(EventService eventService,
                                    PersonService personService,
                                    PaymentService paymentService,
@@ -149,10 +161,17 @@ public class MainWindow extends JFrame {
                 repaymentService);
     }
 
+    /**
+     * Creates button which iterate day
+     */
     private void createNextDayButton() {
         nextDay.addActionListener(e -> updateDate());
     }
 
+    /**
+     * Generates logs to pay money for the future event.
+     * Sends a notice to anyone who hasn't paid a week before the event
+     */
     private void remindAboutMoney() {
         repaymentService.getAllByPaymentTimeEquals(Date.valueOf(applicationDate.toLocalDate().plusDays(7)))
                 .forEach(repayment -> personService.findAllPeople().forEach(person -> {
@@ -169,6 +188,10 @@ public class MainWindow extends JFrame {
                 }));
     }
 
+    /**
+     * Generates logs to pay money for the event.
+     * Sends a notice to anyone who hasn't paid a for the event which time has come
+     */
     private void checkNoPay() {
         repaymentService.getByPaymentTimeBefore(applicationDate)
                 .forEach(repayment -> personService.findAllPeople().forEach(person -> {
@@ -185,6 +208,9 @@ public class MainWindow extends JFrame {
                 }));
     }
 
+    /**
+     * Increments date and start logs generator operation
+     */
     private void updateDate() {
         applicationDate = Date.valueOf(applicationDate.toLocalDate().plusDays(1));
         dateLabel.setText(applicationDate.toString());
@@ -192,10 +218,16 @@ public class MainWindow extends JFrame {
         checkNoPay();
     }
 
+    /**
+     * Creates refresh table button
+     */
     private void createRefreshButton() {
         refreshButton.addActionListener(e -> refreshTables());
     }
 
+    /**
+     * Creates add record to table button
+     */
     private void createAddButton(EventService eventService,
                                  PersonService personService,
                                  PaymentService paymentService,
@@ -232,6 +264,9 @@ public class MainWindow extends JFrame {
         });
     }
 
+    /**
+     * Creates load file to table button
+     */
     private void createLoadButton(EventService eventService,
                                   PersonService personService,
                                   PaymentService paymentService,
@@ -255,6 +290,9 @@ public class MainWindow extends JFrame {
         });
     }
 
+    /**
+     * Creates default table models
+     */
     private void createTables() {
         defaultTableModelArrayList = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
@@ -271,6 +309,9 @@ public class MainWindow extends JFrame {
         createRepaymentTable();
     }
 
+    /**
+     * Refreshes tables data
+     */
     private void refreshTables() {
         defaultTableModelArrayList.forEach(tDefaultTableModel -> tDefaultTableModel.setRowCount(0));
         eventService.findAllEvents().forEach(e -> defaultTableModelArrayList.get(0)
@@ -301,6 +342,9 @@ public class MainWindow extends JFrame {
                         e.getRepayment().getRepaymentID()}));
     }
 
+    /**
+     * Creates event table labels
+     */
     private void createEventTable() {
         defaultTableModelArrayList.get(0).addColumn("Event ID");
         defaultTableModelArrayList.get(0).addColumn("Name");
@@ -309,6 +353,9 @@ public class MainWindow extends JFrame {
         eventTable.setModel(defaultTableModelArrayList.get(0));
     }
 
+    /**
+     * Creates person table labels
+     */
     private void createPersonTable() {
         defaultTableModelArrayList.get(1).addColumn("Person ID");
         defaultTableModelArrayList.get(1).addColumn("Name");
@@ -316,6 +363,9 @@ public class MainWindow extends JFrame {
         personTable.setModel(defaultTableModelArrayList.get(1));
     }
 
+    /**
+     * Creates repayment table labels
+     */
     private void createRepaymentTable() {
         defaultTableModelArrayList.get(2).addColumn("Repayment ID");
         defaultTableModelArrayList.get(2).addColumn("Event ID");
@@ -325,6 +375,9 @@ public class MainWindow extends JFrame {
         repaymentTable.setModel(defaultTableModelArrayList.get(2));
     }
 
+    /**
+     * Creates payment table labels
+     */
     private void createPaymentTable() {
         defaultTableModelArrayList.get(3).addColumn("Payment ID");
         defaultTableModelArrayList.get(3).addColumn("Payment Date");
@@ -335,7 +388,9 @@ public class MainWindow extends JFrame {
         paymentTable.setModel(defaultTableModelArrayList.get(3));
     }
 
-
+    /**
+     * Starts application
+     */
     public static void main(String[] args) {
         var ctx = new SpringApplicationBuilder(MainWindow.class)
                 .headless(false).run(args);

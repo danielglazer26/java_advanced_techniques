@@ -15,7 +15,7 @@ public class Repayment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int repaymentID;
     @OneToOne
-    @JoinColumn(name = "event_event_id")
+    @JoinColumn(name = "event_id")
     private Event event;
     private int number;
     private Date paymentTime;

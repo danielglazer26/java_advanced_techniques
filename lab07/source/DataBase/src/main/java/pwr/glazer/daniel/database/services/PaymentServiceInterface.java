@@ -8,7 +8,6 @@ import java.util.List;
 
 public interface PaymentServiceInterface {
     List<Payment> findAllPayments();
-    List<Payment> getPaymentsByRepayment(Repayment repayment);
     Boolean existsByRepaymentAndAndPersonID(Repayment repayment, Person personID);
     void saveAllPayments(List<Payment> payments);
     void savePayment(Payment payment);

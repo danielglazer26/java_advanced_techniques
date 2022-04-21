@@ -27,11 +27,6 @@ public class PaymentService implements PaymentServiceInterface {
     }
 
     @Override
-    public List<Payment> getPaymentsByRepayment(Repayment repayment) {
-        return paymentRepository.getPaymentsByRepayment(repayment);
-    }
-
-    @Override
     public Boolean existsByRepaymentAndAndPersonID(Repayment repayment, Person personID) {
         return paymentRepository.existsByRepaymentAndAndPersonID(repayment, personID);
     }

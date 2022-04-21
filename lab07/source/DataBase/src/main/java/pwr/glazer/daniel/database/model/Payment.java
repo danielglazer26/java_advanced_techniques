@@ -18,10 +18,10 @@ public class Payment {
     private Date paymentDate;
     private double cashValue;
     @OneToOne
-    @JoinColumn(name = "person_id_person_id")
+    @JoinColumn(name = "person_id")
     private Person personID;
     @OneToOne
-    @JoinColumn
+    @JoinColumn(name = "event_id")
     private Event eventID;
     @OneToOne
     @JoinColumn(name = "repaymentID")
