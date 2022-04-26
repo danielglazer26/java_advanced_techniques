@@ -1,6 +1,7 @@
 package pwr.glazer.daniel.database.services.implemantion;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pwr.glazer.daniel.database.model.Event;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Service
 @Transactional
+@Component
 public class EventService implements EventServiceInterface {
 
 

@@ -1,22 +1,17 @@
-Napisz program, który pozwoli zasymulować działanie narzędzia do obsługi finansów komitetu rodzicielskiego jakiejś szkolnej klasy. Główną funkcją tego narzędzia ma być obsługa przypadku zbierania funduszy na organizowane wydarzenia. Narzędzie może działać jako aplikacja desktopowa w trybie konsolowym, może też być zaimplementowane jako aplikacja z graficznym interfejsem (desktopowa lub internetowa, ale to wymagałoby więcej pracy).
+Zaimplementuj serwis komunikujący się protokołem SOAP, który pozwoli wykorzystać logikę biznesową (z warstwą
+persystencji) zaprojektowaną w ramach lab07. Serwis ten ma udostępniać API pozwalające na zarządzanie wydarzeniami,
+osobami, ratami, wpłatami. Klientem serwisu może być narzędzie SoapUI lub Postman (nie trzeba samemu implementować
+żadnego klienta).
 
-Zadanie należy zrealizować wykorzystując relacyjną bazę danych. Można skorzystać z sqlite czy też h2 (zalecane, bo nie ma potrzeby instalowania żadnego dodatkowego serwisu) lub innej bazy danych (pod warunkiem, że podczas oddawania zadania będzie można połączyć się z tą bazą danych).
+Podczas implementacji można wykorzystać dowolną metodę przetwarzania komunikatów SOAP. Z uwagi na dużą automatyzację
+zalecane jest wykorzystanie JAX-WS/Apache CXF. Można wybrać podejście bottomUp lub topDown. Zalecane jest oparcie
+budowanego rozwiązania na czymś, co pozwoli obsłużyć opis interfejsu w języku WSDL.
 
-Podczas realizacji zadania można skorzystać ze wzorca projektowego DAO (oraz możliwości, jakie daje JDBC) lub mapowania ORM (oraz możliwości, jakie daje JPA razem z frameworkiem Hibernate).
+Tworzony projekt może być projektem eclipsowym (DynamicWebProject) lub jeszcze lepiej - projektem mavenowym.
 
-W przypadku użycia DAO (z JDBC) proszę pamiętać, by parametryzować zapytania SQL (nie wolno budować zapytań poprzez "sklejanie" kolejnych ciągów znaków). Proszę pamiętać o przewijalności zbioru wynikowego.
+Istnieje niezły tutorial o tym, jak stworzyć projekt mavenowy, który korzysta z
+CXF (https://www.cse.unsw.edu.au/~cs9322/labs/lab01/index.html). Jest też (może nawet lepszy) tutorial na
+stronie: https://www.tutorialspoint.com/apache_cxf/apache_cxf_with_wsdl_first.htm
 
-W przypadku zastosowania mapowania ORM proszę zadbać o automatyczne wygenerowanie schematu bazy danych oraz zastosowanie warstwy serwisów.
-
-Zakładamy, że w bazie danych będą przechowywane następujące informacje:
-* Wydarzenie - identyfikator, nazwa, miejsce, termin
-* Osoba - identyfikator, imię, nazwisko
-* Raty - identyfikator, identyfikator wydarzenia, numer raty, termin płatności, kwota
-* Wpłaty - identyfikator, termin wpłaty, kwota wpłaty, identyfikator osoby, identyfikator wydarzenia, numer raty
-
-
-Program powinien:
-- umożliwiać ręczne wprowadzanie danych (osób, wydarzeń, rat, wpłat) oraz ładowanie danych z plików csv.
-- umożliwiać przeglądanie danych (w szczególności przeglądanie należnych i dokonanych wpłat)
-- automatycznie sprawdzać terminowość i wysokość wpłat oraz wysyłać monity o kolejnych płatnościach (wystarczy, że będzie pisał do pliku z logami monitów, upływ czasu należy zasymulować).
-- automatycznie eskalować monity w przypadku braku terminowej wpłaty (wystarczy, że będzie pisał do pliku z logami ekalowanych monitów, upływ czasu należy zasymulować)
+Można też spróbować zrealizować laboratorium korzystając z Spring Boot (odpowiedni tutorial znajduje się pod
+adresem: https://www.baeldung.com/spring-boot-soap-web-service).
