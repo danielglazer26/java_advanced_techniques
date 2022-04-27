@@ -3,6 +3,7 @@ package pwr.glazer.daniel.database.services.implemantion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pwr.glazer.daniel.database.model.Event;
 import pwr.glazer.daniel.database.model.Repayment;
 import pwr.glazer.daniel.database.repositories.RepaymentRepository;
 import pwr.glazer.daniel.database.services.RepaymentServiceInterface;
@@ -49,5 +50,10 @@ public class RepaymentService implements RepaymentServiceInterface {
     @Override
     public void saveRepayment(Repayment repayment) {
         repaymentRepository.save(repayment);
+    }
+
+    @Override
+    public int getRepaymentIDByEventAndNumberAndPaymentTimeAndValue(Event event, int number, Date paymentTime, Double value) {
+        return repaymentRepository.getRepaymentIDByEventAndNumberAndPaymentTimeAndValue(event, number, paymentTime, value);
     }
 }

@@ -97,7 +97,7 @@
 				</executions>
 				<configuration>
 					<sources>
-						<source>${project.basedir}/src/main/resources/event.xsd</source>
+						<source>${project.basedir}/src/main/resources/financeManagement.xsd</source>
 					</sources>
 				</configuration>
 			</plugin>

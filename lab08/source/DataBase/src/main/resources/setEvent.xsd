@@ -8,15 +8,7 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    <xs:element name="setEventRequest">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="name" type="xs:string"/>
-                <xs:element name="place" type="xs:string"/>
-                <xs:element name="date" type="xs:string" />
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
+
 
     <xs:element name="getEventResponse">
         <xs:complexType>
@@ -26,7 +18,17 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="setEventResponse">
+    <xs:element name="getEventRequestSave">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="xs:string"/>
+                <xs:element name="place" type="xs:string"/>
+                <xs:element name="date" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getEventResponseSave">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="eventID" type="xs:int"/>

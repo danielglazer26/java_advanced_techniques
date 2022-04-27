@@ -1,0 +1,58 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="localhost"
+           targetNamespace="localhost" elementFormDefault="qualified">
+
+
+    <xs:element name="getRepaymentRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="repaymentID" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getRepaymentResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="repayment" type="tns:repayment"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="setRepaymentRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="eventID" type="tns:event"/>
+                <xs:element name="number" type="xs:int"/>
+                <xs:element name="paymentTime" type="xs:string"/>
+                <xs:element name="value" type="xs:double"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="setRepaymentResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="repaymentID" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="event">
+        <xs:sequence>
+            <xs:element name="eventID" type="xs:int"/>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="place" type="xs:string"/>
+            <xs:element name="date" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="repayment">
+        <xs:sequence>
+            <xs:element name="repaymentID" type="xs:int"/>
+            <xs:element name="eventID" type="tns:event"/>
+            <xs:element name="number" type="xs:int"/>
+            <xs:element name="paymentTime" type="xs:string"/>
+            <xs:element name="value" type="xs:double"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+</xs:schema>

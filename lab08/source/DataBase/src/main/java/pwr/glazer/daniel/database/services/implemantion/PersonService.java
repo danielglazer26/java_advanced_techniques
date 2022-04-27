@@ -40,4 +40,9 @@ public class PersonService implements PersonServiceInterface {
     public void savePerson(Person person) {
         personRepository.save(person);
     }
+
+    @Override
+    public int getPersonIDByNameAndSurname(String name, String surname) {
+        return personRepository.getPersonIDByNameAndSurname(name, surname);
+    }
 }
