@@ -44,7 +44,7 @@ public class GeoClientConnection {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(geoRequestURL))
                 .header("x-rapidapi-host", "wft-geo-db.p.rapidapi.com")
-                .header("x-rapidapi-key", "0c1ae71228msh41da9b4a77df447p1d67fbjsnfd9e4cefb8e5")
+                .header("x-rapidapi-key", "")
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
         HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
