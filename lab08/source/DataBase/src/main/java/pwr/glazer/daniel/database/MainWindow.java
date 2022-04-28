@@ -30,7 +30,7 @@ public class MainWindow extends JFrame {
     private final PersonService personService;
     private final PaymentService paymentService;
     private final RepaymentService repaymentService;
-    private JPanel contentPane;
+    private JPanel jPanel;
     private JPanel mainPanel;
     private JTable eventTable;
     private JTable personTable;
@@ -79,7 +79,7 @@ public class MainWindow extends JFrame {
             UIManager.setLookAndFeel("com.formdev.flatlaf.FlatDarculaLaf");
             setDefaultLookAndFeelDecorated(true);
 
-            setContentPane(contentPane);
+            setContentPane(jPanel);
             setDefaultCloseOperation(EXIT_ON_CLOSE);
 
             createSimulationComponents();

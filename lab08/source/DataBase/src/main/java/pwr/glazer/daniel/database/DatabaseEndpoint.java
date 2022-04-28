@@ -103,7 +103,29 @@ public class DatabaseEndpoint {
         SetRepaymentResponse response = new SetRepaymentResponse();
 
         Date date = convertStringToDate(request.getPaymentTime());
+        Event event = eventService.getByEventID(request.getEventID());
+        repaymentService.saveRepayment(new Repayment(
+                event,
+                request.getNumber(),
+                date,
+                request.getValue()));
+        response.setRepaymentID(repaymentService.getRepaymentIDByEventAndNumberAndPaymentTimeAndValue(
+                event,
+                request.getNumber(),
+                date,
+                request.getValue()));
+
+        return response;
+    }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "createRepaymentRequest")
+    @ResponsePayload
+    public CreateRepaymentResponse createRepaymentResponse(@RequestPayload CreateRepaymentRequest request) {
+        CreateRepaymentResponse response = new CreateRepaymentResponse();
+
+        Date date = convertStringToDate(request.getPaymentTime());
         Event event = convertSoapEventToEvent(request.getEventID());
+        eventService.saveEvent(event);
         repaymentService.saveRepayment(new Repayment(
                 event,
                 request.getNumber(),
@@ -134,9 +156,40 @@ public class DatabaseEndpoint {
     public SetPaymentResponse setPaymentResponse(@RequestPayload SetPaymentRequest request) {
         SetPaymentResponse response = new SetPaymentResponse();
 
+        Event event = eventService.getByEventID(request.getEventID());
+        Person person = personService.getByPersonID(request.getPersonID());
+        Repayment repayment = repaymentService.getByRepaymentID(request.getRepaymentID());
+        paymentService.savePayment(new Payment(
+                convertStringToDate(request.getPaymentDate()),
+                request.getCashValue(),
+                person,
+                event,
+                repayment));
+        response.setPaymentID(paymentService.getPaymentIDByPaymentDateAndCashValueAndPersonIDAndEventIDAndRepayment(
+                convertStringToDate(request.getPaymentDate()),
+                request.getCashValue(),
+                person,
+                event,
+                repayment
+        ));
+
+        return response;
+    }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "createPaymentRequest")
+    @ResponsePayload
+    public CreatePaymentResponse createPaymentResponse(@RequestPayload CreatePaymentRequest request) {
+        CreatePaymentResponse response = new CreatePaymentResponse();
+
         Event event = convertSoapEventToEvent(request.getEventID());
+        eventService.saveEvent(event);
         Person person = convertSoapPersonToPerson(request.getPersonID());
-        Repayment repayment = convertSoapRepaymentToRepayment(request.getRepaymentID());
+        Repayment repayment = convertSoapRepaymentToRepayment(
+                request.getRepaymentID(),
+                event);
+        personService.savePerson(person);
+        repaymentService.saveRepayment(repayment);
+
         paymentService.savePayment(new Payment(
                 convertStringToDate(request.getPaymentDate()),
                 request.getCashValue(),
@@ -169,7 +222,6 @@ public class DatabaseEndpoint {
 
     private static Event convertSoapEventToEvent(localhost.Event eventSoap) {
         Event event = new Event();
-        event.setEventID(eventSoap.getEventID());
         event.setName(eventSoap.getName());
         event.setPlace(eventSoap.getPlace());
         event.setDate(convertStringToDate(eventSoap.getDate()));
@@ -186,7 +238,6 @@ public class DatabaseEndpoint {
 
     private static Person convertSoapPersonToPerson(localhost.Person personSoap) {
         Person person = new Person();
-        person.setPersonID(personSoap.getPersonID());
         person.setName(personSoap.getName());
         person.setSurname(personSoap.getSurname());
         return person;
@@ -202,10 +253,9 @@ public class DatabaseEndpoint {
         return repaymentSoap;
     }
 
-    private static Repayment convertSoapRepaymentToRepayment(localhost.Repayment repaymentSoap) {
+    private static Repayment convertSoapRepaymentToRepayment(localhost.Repayment repaymentSoap, Event event) {
         Repayment repayment = new Repayment();
-        repayment.setRepaymentID(repaymentSoap.getRepaymentID());
-        repayment.setEvent(convertSoapEventToEvent(repaymentSoap.getEventID()));
+        repayment.setEvent(event);
         repayment.setNumber(repaymentSoap.getNumber());
         repayment.setValue(repaymentSoap.getValue());
         repayment.setPaymentTime(convertStringToDate(repaymentSoap.getPaymentTime()));

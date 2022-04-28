@@ -44,7 +44,7 @@ public class WebServiceConfig extends WsConfigurerAdapter {
         return wsdl11Definition;
     }
 
-     @Bean(name = "payment")
+    @Bean(name = "payment")
     public DefaultWsdl11Definition defaultWsdl11DefinitionPayment(XsdSchema paymentSchema) {
         DefaultWsdl11Definition wsdl11Definition = new DefaultWsdl11Definition();
         wsdl11Definition.setPortTypeName("PaymentPort");
@@ -64,6 +64,16 @@ public class WebServiceConfig extends WsConfigurerAdapter {
         return wsdl11Definition;
     }
 
+    @Bean(name = "all")
+    public DefaultWsdl11Definition defaultWsdl11DefinitionAll(XsdSchema allSchema) {
+        DefaultWsdl11Definition wsdl11Definition = new DefaultWsdl11Definition();
+        wsdl11Definition.setPortTypeName("AllPort");
+        wsdl11Definition.setLocationUri("/finance");
+        wsdl11Definition.setSchema(allSchema);
+
+        return wsdl11Definition;
+    }
+
     @Bean
     public XsdSchema eventSchema() {
         return new SimpleXsdSchema(new ClassPathResource("event.xsd"));
@@ -75,10 +85,17 @@ public class WebServiceConfig extends WsConfigurerAdapter {
     }
 
     @Bean
-    public XsdSchema paymentSchema() { return new SimpleXsdSchema(new ClassPathResource("payment.xsd")); }
+    public XsdSchema paymentSchema() {
+        return new SimpleXsdSchema(new ClassPathResource("payment.xsd"));
+    }
 
     @Bean
     public XsdSchema repaymentSchema() {
         return new SimpleXsdSchema(new ClassPathResource("repayment.xsd"));
+    }
+
+    @Bean
+    public XsdSchema allSchema() {
+        return new SimpleXsdSchema(new ClassPathResource("financeManagement.xsd"));
     }
 }

@@ -159,6 +159,7 @@ public class MainWindow extends JFrame {
                 personService,
                 eventService,
                 repaymentService);
+        refreshTables();
     }
 
     /**

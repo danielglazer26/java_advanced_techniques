@@ -84,7 +84,7 @@
     <xs:element name="setRepaymentRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="eventID" type="tns:event"/>
+                <xs:element name="eventID" type="xs:int"/>
                 <xs:element name="number" type="xs:int"/>
                 <xs:element name="paymentTime" type="xs:string"/>
                 <xs:element name="value" type="xs:double"/>
@@ -92,6 +92,24 @@
         </xs:complexType>
     </xs:element>
     <xs:element name="setRepaymentResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="repaymentID" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="createRepaymentRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="eventID" type="tns:event"/>
+                <xs:element name="number" type="xs:int"/>
+                <xs:element name="paymentTime" type="xs:string"/>
+                <xs:element name="value" type="xs:double"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="createRepaymentResponse">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="repaymentID" type="xs:int"/>
@@ -118,6 +136,25 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="paymentDate" type="xs:string"/>
+                <xs:element name="eventID" type="xs:int"/>
+                <xs:element name="cashValue" type="xs:double"/>
+                <xs:element name="personID" type="xs:int"/>
+                <xs:element name="repaymentID" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="setPaymentResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="paymentID" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="createPaymentRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="paymentDate" type="xs:string"/>
                 <xs:element name="eventID" type="tns:event"/>
                 <xs:element name="cashValue" type="xs:double"/>
                 <xs:element name="personID" type="tns:person"/>
@@ -125,7 +162,7 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    <xs:element name="setPaymentResponse">
+    <xs:element name="createPaymentResponse">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="paymentID" type="xs:int"/>
