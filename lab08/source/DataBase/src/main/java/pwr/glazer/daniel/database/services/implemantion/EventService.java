@@ -8,6 +8,7 @@ import pwr.glazer.daniel.database.model.Event;
 import pwr.glazer.daniel.database.repositories.EventRepository;
 import pwr.glazer.daniel.database.services.EventServiceInterface;
 
+import java.sql.Date;
 import java.util.List;
 
 @Service
@@ -38,6 +39,10 @@ public class EventService implements EventServiceInterface {
         return eventRepository.getByEventID(eventID);
     }
 
+    @Override
+    public int getEventIDByNameAndPlaceAndDate(String name, String place, Date date) {
+        return eventRepository.getEventIDByNameAndPlaceAndDate(name, place, date);
+    }
     @Override
     public void saveEvent(Event event) {
         eventRepository.save(event);

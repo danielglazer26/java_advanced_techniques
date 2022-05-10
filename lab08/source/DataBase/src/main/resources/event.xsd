@@ -1,5 +1,5 @@
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://spring.io/guides/gs-producing-web-service"
-           targetNamespace="http://spring.io/guides/gs-producing-web-service" elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="localhost"
+           targetNamespace="localhost" elementFormDefault="qualified">
 
     <xs:element name="getEventRequest">
         <xs:complexType>
@@ -8,7 +8,15 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-
+    <xs:element name="setEventRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="xs:string"/>
+                <xs:element name="place" type="xs:string"/>
+                <xs:element name="date" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
 
     <xs:element name="getEventResponse">
         <xs:complexType>
@@ -18,23 +26,13 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="getPersonRequest">
+    <xs:element name="setEventResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="personID" type="xs:int"/>
+                <xs:element name="eventID" type="xs:int"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-
-
-    <xs:element name="getPersonResponse">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="person" type="tns:person"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
 
     <xs:complexType name="event">
         <xs:sequence>
@@ -44,34 +42,4 @@
             <xs:element name="date" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
-
-    <xs:complexType name="person">
-        <xs:sequence>
-            <xs:element name="personID" type="xs:int"/>
-            <xs:element name="name" type="xs:string"/>
-            <xs:element name="surname" type="xs:string"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="repayment">
-        <xs:sequence>
-            <xs:element name="repaymentID" type="xs:int"/>
-            <xs:element name="eventID" type="tns:event"/>
-            <xs:element name="number" type="xs:int"/>
-            <xs:element name="paymentTime" type="xs:string"/>
-            <xs:element name="value" type="xs:double"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="payment">
-        <xs:sequence>
-            <xs:element name="paymentID" type="xs:int"/>
-            <xs:element name="paymentDate" type="xs:string"/>
-            <xs:element name="cashValue" type="xs:double"/>
-            <xs:element name="personID" type="tns:person"/>
-            <xs:element name="repaymentID" type="tns:repayment"/>
-        </xs:sequence>
-    </xs:complexType>
-
-
 </xs:schema>

@@ -30,7 +30,7 @@ public class MainWindow extends JFrame {
     private final PersonService personService;
     private final PaymentService paymentService;
     private final RepaymentService repaymentService;
-    private JPanel contentPane;
+    private JPanel jPanel;
     private JPanel mainPanel;
     private JTable eventTable;
     private JTable personTable;
@@ -79,7 +79,7 @@ public class MainWindow extends JFrame {
             UIManager.setLookAndFeel("com.formdev.flatlaf.FlatDarculaLaf");
             setDefaultLookAndFeelDecorated(true);
 
-            setContentPane(contentPane);
+            setContentPane(jPanel);
             setDefaultCloseOperation(EXIT_ON_CLOSE);
 
             createSimulationComponents();
@@ -159,6 +159,7 @@ public class MainWindow extends JFrame {
                 personService,
                 eventService,
                 repaymentService);
+        refreshTables();
     }
 
     /**
@@ -175,7 +176,7 @@ public class MainWindow extends JFrame {
     private void remindAboutMoney() {
         repaymentService.getAllByPaymentTimeEquals(Date.valueOf(applicationDate.toLocalDate().plusDays(7)))
                 .forEach(repayment -> personService.findAllPeople().forEach(person -> {
-                    if (!paymentService.existsByRepaymentAndAndPersonID(repayment, person))
+                    if (!paymentService.existsByRepaymentAndPersonID(repayment, person))
                         logsField.setText(logsField.getText()
                                 + "Log from: "
                                 + applicationDate.toString()
@@ -195,7 +196,7 @@ public class MainWindow extends JFrame {
     private void checkNoPay() {
         repaymentService.getByPaymentTimeBefore(applicationDate)
                 .forEach(repayment -> personService.findAllPeople().forEach(person -> {
-                    if (!paymentService.existsByRepaymentAndAndPersonID(repayment, person))
+                    if (!paymentService.existsByRepaymentAndPersonID(repayment, person))
                         logsField.setText(logsField.getText()
                                 + "Log from: "
                                 + applicationDate.toString()

@@ -1,0 +1,45 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="localhost"
+           targetNamespace="localhost" elementFormDefault="qualified">
+
+    <xs:element name="getPersonRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="personID" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getPersonResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="person" type="tns:person"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="setPersonRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="xs:string"/>
+                <xs:element name="surname" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="setPersonResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="personID" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+    <xs:complexType name="person">
+        <xs:sequence>
+            <xs:element name="personID" type="xs:int"/>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="surname" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+</xs:schema>

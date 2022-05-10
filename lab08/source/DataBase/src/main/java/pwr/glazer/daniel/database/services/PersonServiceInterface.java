@@ -9,4 +9,5 @@ public interface PersonServiceInterface {
     Person getByPersonID(int personID);
     void saveAllPeople(List<Person> people);
     void savePerson(Person person);
+    int getPersonIDByNameAndSurname(String name, String surname);
 }

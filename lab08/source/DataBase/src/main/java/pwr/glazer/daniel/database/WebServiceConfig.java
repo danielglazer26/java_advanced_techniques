@@ -20,22 +20,82 @@ public class WebServiceConfig extends WsConfigurerAdapter {
         MessageDispatcherServlet servlet = new MessageDispatcherServlet();
         servlet.setApplicationContext(applicationContext);
         servlet.setTransformWsdlLocations(true);
-        return new ServletRegistrationBean<>(servlet, "/ws/*");
+        return new ServletRegistrationBean<>(servlet, "/finance/*");
     }
 
     @Bean(name = "event")
-    public DefaultWsdl11Definition defaultWsdl11Definition(XsdSchema eventSchema) {
+    public DefaultWsdl11Definition defaultWsdl11DefinitionEvent(XsdSchema eventSchema) {
         DefaultWsdl11Definition wsdl11Definition = new DefaultWsdl11Definition();
         wsdl11Definition.setPortTypeName("EventPort");
-        wsdl11Definition.setLocationUri("/ws");
-        wsdl11Definition.setTargetNamespace("http://spring.io/guides/gs-producing-web-service");
+        wsdl11Definition.setLocationUri("/finance");
+
         wsdl11Definition.setSchema(eventSchema);
+
         return wsdl11Definition;
     }
 
+    @Bean(name = "person")
+    public DefaultWsdl11Definition defaultWsdl11DefinitionPerson(XsdSchema personSchema) {
+        DefaultWsdl11Definition wsdl11Definition = new DefaultWsdl11Definition();
+        wsdl11Definition.setPortTypeName("PersonPort");
+        wsdl11Definition.setLocationUri("/finance");
+        wsdl11Definition.setSchema(personSchema);
+
+        return wsdl11Definition;
+    }
+
+    @Bean(name = "payment")
+    public DefaultWsdl11Definition defaultWsdl11DefinitionPayment(XsdSchema paymentSchema) {
+        DefaultWsdl11Definition wsdl11Definition = new DefaultWsdl11Definition();
+        wsdl11Definition.setPortTypeName("PaymentPort");
+        wsdl11Definition.setLocationUri("/finance");
+        wsdl11Definition.setSchema(paymentSchema);
+
+        return wsdl11Definition;
+    }
+
+    @Bean(name = "repayment")
+    public DefaultWsdl11Definition defaultWsdl11DefinitionRepayment(XsdSchema repaymentSchema) {
+        DefaultWsdl11Definition wsdl11Definition = new DefaultWsdl11Definition();
+        wsdl11Definition.setPortTypeName("RepaymentPort");
+        wsdl11Definition.setLocationUri("/finance");
+        wsdl11Definition.setSchema(repaymentSchema);
+
+        return wsdl11Definition;
+    }
+
+    @Bean(name = "all")
+    public DefaultWsdl11Definition defaultWsdl11DefinitionAll(XsdSchema allSchema) {
+        DefaultWsdl11Definition wsdl11Definition = new DefaultWsdl11Definition();
+        wsdl11Definition.setPortTypeName("AllPort");
+        wsdl11Definition.setLocationUri("/finance");
+        wsdl11Definition.setSchema(allSchema);
+
+        return wsdl11Definition;
+    }
 
     @Bean
     public XsdSchema eventSchema() {
         return new SimpleXsdSchema(new ClassPathResource("event.xsd"));
+    }
+
+    @Bean
+    public XsdSchema personSchema() {
+        return new SimpleXsdSchema(new ClassPathResource("person.xsd"));
+    }
+
+    @Bean
+    public XsdSchema paymentSchema() {
+        return new SimpleXsdSchema(new ClassPathResource("payment.xsd"));
+    }
+
+    @Bean
+    public XsdSchema repaymentSchema() {
+        return new SimpleXsdSchema(new ClassPathResource("repayment.xsd"));
+    }
+
+    @Bean
+    public XsdSchema allSchema() {
+        return new SimpleXsdSchema(new ClassPathResource("financeManagement.xsd"));
     }
 }
