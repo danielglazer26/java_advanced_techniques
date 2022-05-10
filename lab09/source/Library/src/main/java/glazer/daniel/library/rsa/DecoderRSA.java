@@ -4,6 +4,7 @@ import glazer.daniel.library.FileService;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,18 +18,27 @@ import static glazer.daniel.library.FileService.writeToFile;
 
 public class DecoderRSA {
 
-    private final Cipher cipher;
+    private Cipher cipher;
     private PublicKey publicKey;
+    private SecretKey secretKey;
 
-    public DecoderRSA() throws NoSuchAlgorithmException, NoSuchPaddingException {
-        cipher = Cipher.getInstance("RSA");
+    public void setCipher(String algorithm) {
+        try {
+            this.cipher = Cipher.getInstance(algorithm);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void getPublic(Path publicKeyPath) throws Exception {
+    public void getPublic(Path publicKeyPath, String algorithm) throws Exception {
         byte[] keyBytes = Files.readAllBytes(publicKeyPath);
         X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
-        KeyFactory kf = KeyFactory.getInstance("RSA");
+        KeyFactory kf = KeyFactory.getInstance(algorithm);
         publicKey = kf.generatePublic(spec);
+    }
+
+    public void getPublicSymmetric(String publicKeyPath) throws Exception {
+        secretKey = FileService.loadFileObject(publicKeyPath);
     }
 
     public void decryptFile(String decryptedFile, Path pathToFileToDecrypt)
@@ -37,13 +47,16 @@ public class DecoderRSA {
         writeToFile(decryptedFile, cipher.doFinal(FileService.loadFileBytes(pathToFileToDecrypt)));
     }
 
+    public void decryptFileSymmetric(String decryptedFile, Path pathToFileToDecrypt)
+            throws IOException, GeneralSecurityException {
+        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+        writeToFile(decryptedFile, cipher.doFinal(FileService.loadFileBytes(pathToFileToDecrypt)));
+    }
+
     public static void main(String[] args) throws Exception {
         DecoderRSA decoderRSA = new DecoderRSA();
-        decoderRSA.getPublic(Path.of("C:\\Pwr\\3 rok\\6 semestr\\ZT - Java\\dglazer_252743_java\\lab09\\source\\Library\\publicKey"));
-        if(decoderRSA.publicKey != null){
-            decoderRSA.decryptFile("C:\\Pwr\\3 rok\\6 semestr\\ZT - " +
-                    "Java\\dglazer_252743_java\\lab09\\source\\Library\\toJestPlikRozszyfrowany.txt", Path.of("C:\\Pwr\\3 rok\\6 semestr\\ZT - " +
-                    "Java\\dglazer_252743_java\\lab09\\source\\Library\\noNieWiem.txt"));
-        }
+        decoderRSA.setCipher("AES");
+        decoderRSA.getPublicSymmetric(args[0]);
+        decoderRSA.decryptFileSymmetric(args[1], Path.of(args[2]));
     }
 }
