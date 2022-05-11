@@ -1,0 +1,4 @@
+"C:\Program Files\Java\jdk-11.0.14\bin\java" -jar multi_jar-1.0.jar
+"C:\Program Files\Java\jdk-10.0.2\bin\java" -jar multi_jar-1.0.jar
+"C:\Program Files\Java\jdk-9.0.4\bin\java" -jar multi_jar-1.0.jar
+"C:\Program Files\Java\jdk1.8.0_333\bin\java" -jar multi_jar-1.0.jar
