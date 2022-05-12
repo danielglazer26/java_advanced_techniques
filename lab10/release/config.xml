@@ -2,7 +2,7 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>console</headerType>
-  <jar>C:\Pwr\3 rok\6 semestr\ZT - Java\dglazer_252743_java\lab10\source\Multi-release_JARs\Multi-release_JARs\target\multi_jar-1.0.jar</jar>
+  <jar>C:\Pwr\3 rok\6 semestr\ZT - Java\dglazer_252743_java\lab10\source\Multi_JARs\target\multi_jar-1.0.jar</jar>
   <outfile>C:\Pwr\3 rok\6 semestr\ZT - Java\dglazer_252743_java\lab10\release\application.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
