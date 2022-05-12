@@ -3,18 +3,21 @@ package daniel.glazer.app;
 import javax.swing.*;
 import java.awt.*;
 
-import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
-
-public class AppWindow  {
+public class AppWindow implements MyInterface {
 
     private JFrame frame;
+    private JTextField inputField;
 
     public AppWindow() {
         initialize();
-
-
     }
-    public void setVisible(boolean bln){
+
+    @Override
+    public String textSorter(String text) {
+        return MyInterface.super.textSorter(text);
+    }
+
+    public void setVisible(boolean bln) {
         frame.setVisible(bln);
     }
 
@@ -23,26 +26,26 @@ public class AppWindow  {
      */
     private void initialize() {
         frame = new JFrame();
-        frame.setBounds(100, 100, 450, 300);
+        frame.setBounds(100, 100, 311, 123);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.columnWidths = new int[]{0, 0, 0};
+        gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
         gridBagLayout.rowHeights = new int[]{0, 0};
-        gridBagLayout.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
-        gridBagLayout.rowWeights = new double[]{1.0, Double.MIN_VALUE};
+        gridBagLayout.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE, 0.0};
+        gridBagLayout.rowWeights = new double[]{1.0, 0.0};
         frame.getContentPane().setLayout(gridBagLayout);
 
         JPanel panel_1 = new JPanel();
         GridBagConstraints gbc_panel_1 = new GridBagConstraints();
         gbc_panel_1.anchor = GridBagConstraints.NORTH;
-        gbc_panel_1.insets = new Insets(0, 0, 0, 5);
+        gbc_panel_1.insets = new Insets(0, 0, 5, 5);
         gbc_panel_1.fill = GridBagConstraints.HORIZONTAL;
         gbc_panel_1.gridx = 0;
         gbc_panel_1.gridy = 0;
         frame.getContentPane().add(panel_1, gbc_panel_1);
         GridBagLayout gbl_panel_1 = new GridBagLayout();
-        gbl_panel_1.columnWidths = new int[] {0};
-        gbl_panel_1.rowHeights = new int[] {0, 0};
+        gbl_panel_1.columnWidths = new int[]{0};
+        gbl_panel_1.rowHeights = new int[]{0, 0};
         gbl_panel_1.columnWeights = new double[]{0.0};
         gbl_panel_1.rowWeights = new double[]{0.0, Double.MIN_VALUE};
         panel_1.setLayout(gbl_panel_1);
@@ -57,13 +60,14 @@ public class AppWindow  {
 
         JPanel panel = new JPanel();
         GridBagConstraints gbc_panel = new GridBagConstraints();
-        gbc_panel.gridwidth = 2;
+        gbc_panel.insets = new Insets(0, 0, 5, 0);
+        gbc_panel.gridwidth = 5;
         gbc_panel.fill = GridBagConstraints.BOTH;
         gbc_panel.gridx = 1;
         gbc_panel.gridy = 0;
         frame.getContentPane().add(panel, gbc_panel);
         GridBagLayout gbl_panel = new GridBagLayout();
-        gbl_panel.columnWidths = new int[] {0, 0};
+        gbl_panel.columnWidths = new int[]{0, 0};
         gbl_panel.rowHeights = new int[]{0, 0};
         gbl_panel.columnWeights = new double[]{0.0, 0.0};
         gbl_panel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
@@ -82,11 +86,44 @@ public class AppWindow  {
         gbc_javaField.gridx = 1;
         gbc_javaField.gridy = 0;
         panel.add(javaField, gbc_javaField);
+        JButton buttonAction = new JButton("Uruchom");
 
-        frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+        inputField = new JTextField();
+        GridBagConstraints gbc_inputField = new GridBagConstraints();
+        gbc_inputField.gridwidth = 2;
+        gbc_inputField.insets = new Insets(0, 0, 0, 5);
+        gbc_inputField.fill = GridBagConstraints.HORIZONTAL;
+        gbc_inputField.gridx = 1;
+        gbc_inputField.gridy = 1;
+        frame.getContentPane().add(inputField, gbc_inputField);
+        inputField.setColumns(10);
+        GridBagConstraints gbc_buttonAction = new GridBagConstraints();
+        gbc_buttonAction.gridwidth = 3;
+        gbc_buttonAction.gridx = 3;
+        gbc_buttonAction.gridy = 1;
+        frame.getContentPane().add(buttonAction, gbc_buttonAction);
+        JLabel outputLabel = new JLabel("");
+        GridBagConstraints gbc_outputLabel = new GridBagConstraints();
+        gbc_outputLabel.fill = GridBagConstraints.HORIZONTAL;
+        gbc_outputLabel.anchor = GridBagConstraints.WEST;
+        gbc_outputLabel.insets = new Insets(0, 0, 0, 5);
+        gbc_outputLabel.gridx = 0;
+        gbc_outputLabel.gridy = 1;
+
         windowField.setText("To jest okno dla Javy 8");
         javaField.setText(System.getProperty("java.version"));
+
+        buttonListener(buttonAction, outputLabel);
+        frame.getContentPane().add(outputLabel, gbc_outputLabel);
         frame.pack();
+    }
+
+    private void buttonListener(JButton buttonAction, JLabel outputField) {
+        buttonAction.addActionListener(e -> {
+            outputField.setText(textSorter(inputField.getText()));
+            frame.pack();
+        });
     }
 
 
