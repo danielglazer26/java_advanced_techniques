@@ -36,6 +36,8 @@ skonfigurować wersję Javy dla głównego katalogu.
         <target>1.8</target>
     </configuration>
 </execution>
+...
+<executions>
 ```
 
 W kolejnym kroku należało zdefiniować ścieżki do pozostałych wersji Javy.
@@ -99,7 +101,9 @@ zostać wygenerowany plik *.exe. Do pełnego funkcjonowania w polu _Jar_ podano 
 
 ### Aplikacja 
 
-Jeśli wszystko udało się wykonać poprawnie, w wybranym katalogu powinien pojawić się plik *.exe o nazwie 
+Jeśli wszystko udało się wykonać poprawnie, to po naciśnięciu przycisku zębatki w wybranym katalogu powinien 
+pojawić 
+się plik *.exe o nazwie 
 zdefiniowanej w polu _output file_.
 
 ![](screens/wygenerowana_aplikacja.png)
