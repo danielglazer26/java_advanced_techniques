@@ -1,5 +1,7 @@
 package glazer.daniel.library.keygenerator;
 
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -9,11 +11,23 @@ import static glazer.daniel.library.FileService.writeToFile;
 
 public class GenerateKeys {
 
-    public static void generateRSAKey(String publicKey, String privateKey) {
+    public static void generateAsymmetricKey(String publicKey, String privateKey, int size, String algorithm) {
         try {
-            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-            keyGen.initialize(1024);
+            KeyPairGenerator keyGen = KeyPairGenerator.getInstance(algorithm);
+            keyGen.initialize(size);
             createRSAKeys(keyGen, publicKey, privateKey);
+        } catch (NoSuchAlgorithmException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void generateSymmetricKey(String fileName, int size, String algorithm) {
+        KeyGenerator keyGenerator = null;
+        try {
+            keyGenerator = KeyGenerator.getInstance(algorithm);
+            keyGenerator.init(size);
+            SecretKey secretKey = keyGenerator.generateKey();
+            writeToFile(fileName, secretKey);
         } catch (NoSuchAlgorithmException | IOException e) {
             e.printStackTrace();
         }
@@ -27,6 +41,7 @@ public class GenerateKeys {
 
 
     public static void main(String[] args) {
-        GenerateKeys.generateRSAKey("publicKey", "privateKey");
+        //GenerateKeys.generateAsymmetricKey("publicKey", "privateKey", 1024, "RSA");
+        GenerateKeys.generateSymmetricKey("privateKey", 256, "AES");
     }
 }

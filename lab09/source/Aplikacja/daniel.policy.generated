@@ -1,0 +1,14 @@
+/* AUTOMATICALLY GENERATED ON Wed May 04 13:41:19 CEST 2022*/
+/* DO NOT EDIT */
+
+keystore "file:/C:/Pwr/3 rok/6 semestr/ZT - Java/dglazer_252743_java/lab09/source/Library/danielstore", "jks";
+keystorePasswordURL "file:/C:/Pwr/3 rok/6 semestr/ZT - Java/dglazer_252743_java/lab09/source/Aplikacja/daniel.pass";
+
+grant signedBy "daniel", codeBase "file:/C:/Pwr/3 rok/6 semestr/ZT - Java/dglazer_252743_java/lab09/source/Aplikacja/sLibrary.jar" {
+  permission java.io.FilePermission "<<ALL FILES>>", "read, write, delete, execute";
+};
+
+grant codeBase "file:/C:/Pwr/3 rok/6 semestr/ZT - Java/dglazer_252743_java/lab09/source/Aplikacja/target/-" {
+  permission java.security.AllPermission;
+  permission java.io.FilePermission "<<ALL FILES>>", "read, write, delete, execute";
+};

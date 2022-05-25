@@ -1,9 +1,8 @@
 package glazer.daniel.library.rsa;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
+import glazer.daniel.library.FileService;
+
+import javax.crypto.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,18 +18,27 @@ import static glazer.daniel.library.FileService.writeToFile;
 
 public class EncoderRSA {
 
-    private final Cipher cipher;
-    public PrivateKey privateKey = null;
+    private Cipher cipher;
+    private PrivateKey privateKey = null;
+    private SecretKey secretKey = null;
 
-    public EncoderRSA() throws NoSuchAlgorithmException, NoSuchPaddingException {
-        cipher = Cipher.getInstance("RSA");
+    public void setCipher(String algorithm) {
+        try {
+            this.cipher = Cipher.getInstance(algorithm);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void getPrivate(String privateKeyFile) throws Exception {
+    public void getPrivate(String privateKeyFile, String algorithm) throws Exception {
         byte[] keyBytes = Files.readAllBytes(new File(privateKeyFile).toPath());
         PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
-        KeyFactory kf = KeyFactory.getInstance("RSA");
+        KeyFactory kf = KeyFactory.getInstance(algorithm);
         privateKey = kf.generatePrivate(spec);
+    }
+
+    public void getPrivateSymmetric(String privateKeyFile) throws Exception {
+        secretKey = FileService.loadFileObject(privateKeyFile);
     }
 
     public void encryptFile(String encryptedFile, Path pathToFileToEncrypt)
@@ -39,15 +47,23 @@ public class EncoderRSA {
         writeToFile(encryptedFile, cipher.doFinal(loadFileBytes(pathToFileToEncrypt)));
     }
 
+    public void encryptFileSymmetric(String encryptedFile, Path pathToFileToEncrypt)
+            throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        writeToFile(encryptedFile, cipher.doFinal(loadFileBytes(pathToFileToEncrypt)));
+    }
+
     public static void main(String[] args) throws Exception {
+
         EncoderRSA encoderRSA = new EncoderRSA();
-        encoderRSA.getPrivate("privateKey");
+        encoderRSA.setCipher("AES");
+        encoderRSA.getPrivateSymmetric(args[0]);
+        encoderRSA.encryptFileSymmetric(args[1], Path.of(args[2]));
+
+        /*encoderRSA.getPrivate(args[0], "RSA");
         if (encoderRSA.privateKey != null) {
-            encoderRSA.encryptFile("C:\\Pwr\\3 rok\\6 semestr\\ZT - " +
-                    "Java\\dglazer_252743_java\\lab09\\source\\Library\\noNieWiem.txt", Path.of("C:\\Pwr\\3 rok\\6 " +
-                    "semestr\\ZT - " +
-                    "Java\\dglazer_252743_java\\lab09\\source\\Library\\test.txt"));
-        }
+            encoderRSA.encryptFile(args[1], Path.of(args[2]));
+        }*/
     }
 
 

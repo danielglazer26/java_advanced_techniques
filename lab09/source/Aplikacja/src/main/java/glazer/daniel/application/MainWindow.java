@@ -4,12 +4,10 @@ import glazer.daniel.library.keygenerator.GenerateKeys;
 import glazer.daniel.library.rsa.DecoderRSA;
 import glazer.daniel.library.rsa.EncoderRSA;
 
-import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.nio.file.Path;
-import java.security.NoSuchAlgorithmException;
 
 public class MainWindow extends JFrame {
 
@@ -26,16 +24,15 @@ public class MainWindow extends JFrame {
 
     MainWindow() {
         setContentPane(contentPane);
-        try {
-            encoderRSA = new EncoderRSA();
-            decoderRSA = new DecoderRSA();
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-            e.printStackTrace();
-        }
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        encoderRSA = new EncoderRSA();
+        decoderRSA = new DecoderRSA();
 
         loadFileToEncrypted.addActionListener(e -> {
             try {
-                encoderRSA.getPrivate(startFileChooser("Private key"));
+                String algorithm = (String) chooseAlgorithm.getSelectedItem();
+                encoderRSA.setCipher(algorithm);
+                encoderRSA.getPrivate(startFileChooser("Private key"), algorithm);
                 encoderRSA.encryptFile(encryptedFileName.getText(), Path.of(startFileChooser("File to encrypted")));
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -43,7 +40,10 @@ public class MainWindow extends JFrame {
         });
         loadFileToDecrypted.addActionListener(e -> {
             try {
-                decoderRSA.getPublic(Path.of(startFileChooser("Public key")));
+                String algorithm = (String) chooseAlgorithm.getSelectedItem();
+                decoderRSA.setCipher(algorithm);
+                decoderRSA.getPublic(Path.of(startFileChooser("Public key")),
+                        algorithm);
                 decoderRSA.decryptFile(decryptedFileName.getText(), Path.of(startFileChooser("File to decrypted")));
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -51,7 +51,7 @@ public class MainWindow extends JFrame {
         });
         rsaKey.addActionListener(e -> {
             String[] keys = keysName.getText().split(";");
-            GenerateKeys.generateRSAKey(keys[1], keys[0]);
+            GenerateKeys.generateAsymmetricKey(keys[1], keys[0], 1024, (String) chooseAlgorithm.getSelectedItem());
         });
 
         pack();
@@ -67,6 +67,10 @@ public class MainWindow extends JFrame {
             return fileChooser.getSelectedFile().toString();
         }
         return null;
+    }
+
+    private void createUIComponents() {
+        chooseAlgorithm = new JComboBox(new String[]{"RSA", "AES"});
     }
 }
 
