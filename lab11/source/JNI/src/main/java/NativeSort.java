@@ -1,4 +1,11 @@
+import java.util.Arrays;
+
 public class NativeSort {
+
+    static {
+        System.load("C:\\Pwr\\3 rok\\6 semestr\\ZT - Java\\dglazer_252743_java\\lab11\\source\\jniC++\\x64" +
+                "\\Release\\jniC++.dll");
+    }
 
     public Double[] a;
     public Double[] b;
@@ -18,13 +25,14 @@ public class NativeSort {
     // oraz warunek określający sposób sortowania order.
     // Wczytana tablica powinna zostać przekazana do obiektu Javy na pole a, zaś warunek sortowania powinien zostać przekazany
     // do pola orded
-    // Wynik sortowania (tablica b w obiekcie Java) powinna wyliczać metoda Javy multi04
+    // Wynik sortowania (tablica b w obiekcie Java) powinna wyliczać metoda Javy sort04
     // (korzystająca z parametrów a i order, wstawiająca wynik do b).
     public native void sort03();
 
-
+    // sortuje a według order, a wynik wpisuje do b
     public void sort04() {
-        // sortuje a według order, a wynik wpisuje do b
+        b = sort01(a, order);
+
     }
 }
 
