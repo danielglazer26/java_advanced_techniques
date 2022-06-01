@@ -1,9 +1,21 @@
 package application;
 
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
+
 import javax.script.ScriptException;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MainWindow extends JFrame {
+    private int refreshTime;
+    private int maxIteration;
     private int current_turn;
     private Timer timer;
 
@@ -12,60 +24,100 @@ public class MainWindow extends JFrame {
     private JPanel mapPanel;
     private JButton startButton;
     private JButton loadScript;
-    int map_size = 10;
-    int window_resizable = 50;
+    private JTextField setMapParameters;
+    private JLabel iterationLabel;
+    private JButton unloadScript;
+    int map_size;
 
     private Engine engine;
 
     public MainWindow() {
+        $$$setupUI$$$();
         setContentPane(contentPane);
 
         loadScript.addActionListener(e -> {
             engine = new Engine();
             try {
-                String s = "C:\\Pwr\\3 rok\\6 semestr\\ZT - " +
-                        "Java\\dglazer_252743_java\\lab12\\source\\CellularAutomaton\\src" +
-                        "\\main\\resources\\LangtonAnt.js";
-                engine.loadScript(/*actionChooseFile()*/s);
-            } catch (Exception ignore) {
+                engine.loadScript(actionChooseFile());
+            } catch (Exception ex) {
+                createJDialog("Błąd wczytania skryptu");
             }
         });
 
-        startButton.addActionListener(e -> {
-            current_turn = 0;
-            timer = new Timer(100, ex -> {
-                current_turn++;
-                if (current_turn < 1000) {
-                    timer.start();
-                    try {
-                        map.setMap(engine.iterationAnt());
-                        repaint();
-                    } catch (ScriptException | NoSuchMethodException exc) {
-                        throw new RuntimeException(exc);
-                    }
-
-                } else {
-                    timer.stop();
-                }
-                repaint();
-
-            });
-
-            timer.start();
-
+        unloadScript.addActionListener(e -> {
+            if (timer != null)
+                timer.stop();
+            engine = null;
         });
+
+        startButton.addActionListener(e -> {
+            if (timer != null) {
+                if (timer.isRunning())
+                    timer.stop();
+            }
+            current_turn = 0;
+            try {
+                setParameters();
+                resizableWindow();
+                repaint();
+                timer = new Timer(refreshTime, ex -> {
+                    if (current_turn < maxIteration) {
+                        try {
+                            current_turn++;
+                            iterationLabel.setText(current_turn + "/" + maxIteration);
+                            map.setMap(engine.iteration());
+                            repaint();
+                            timer.start();
+                        } catch (ScriptException | NoSuchMethodException exc) {
+                            throw new RuntimeException(exc);
+                        }
+                    } else
+                        timer.stop();
+                });
+
+                timer.start();
+            } catch (ScriptException | NoSuchMethodException ex) {
+                throw new RuntimeException(ex);
+            } catch (NullPointerException np) {
+                createJDialog("Załaduj skrypt");
+            }
+        });
+
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                resizableWindow();
+            }
+        });
+
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
-    private void createUIComponents() {
-        map = new DrawMap(map_size, window_resizable, null);
-        mapPanel = map;
+    private void resizableWindow() {
+        if (map_size != 0) {
+            map.setWindow_resizable_x((getSize().width - 50) / map_size);
+            map.setWindow_resizable_y((getSize().height - 100) / map_size);
+        }
+    }
+
+    private void setParameters() throws ScriptException, NoSuchMethodException {
+        List<Integer> list = Arrays.stream(setMapParameters.getText().split(" "))
+                .map(Integer::new)
+                .collect(Collectors.toList());
+
+        maxIteration = list.get(0);
+        refreshTime = list.get(1);
+        map_size = list.get(2);
+        map.setMap_size(map_size);
+        map.setMap(engine.createMap(map_size, list.get(3), list.get(4)));
+        iterationLabel.setText(current_turn + "/" + maxIteration);
     }
 
     private String actionChooseFile() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
 
         if (fileChooser.showOpenDialog(this) == 0) {
             return fileChooser.getSelectedFile().toString();
@@ -73,10 +125,66 @@ public class MainWindow extends JFrame {
         return null;
     }
 
-    public static void main(String[] args) {
-        MainWindow dialog = new MainWindow();
-        dialog.pack();
+    private void createUIComponents() {
+        map = new DrawMap();
+        mapPanel = map;
+    }
+
+    private void createJDialog(String text) {
+        JDialog dialog = new JDialog(this, "Information");
+        JLabel label = new JLabel(text);
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        dialog.add(label);
+        dialog.setBounds(300, 300, 200, 100);
         dialog.setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel("com.formdev.flatlaf.FlatDarculaLaf");
+            setDefaultLookAndFeelDecorated(true);
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
+                 UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
+        MainWindow mainWindow = new MainWindow();
+        mainWindow.pack();
+        mainWindow.setVisible(true);
+    }
+
+    /**
+     * Method generated by IntelliJ IDEA GUI Designer
+     * >>> IMPORTANT!! <<<
+     * DO NOT edit this method OR call it in your code!
+     *
+     * @noinspection ALL
+     */
+    private void $$$setupUI$$$() {
+        createUIComponents();
+        contentPane = new JPanel();
+        contentPane.setLayout(new GridLayoutManager(2, 5, new Insets(10, 10, 10, 10), -1, -1));
+        contentPane.add(mapPanel, new GridConstraints(0, 0, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        startButton = new JButton();
+        startButton.setText("Start");
+        contentPane.add(startButton, new GridConstraints(1, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        loadScript = new JButton();
+        loadScript.setText("Załaduj skrypt");
+        contentPane.add(loadScript, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        setMapParameters = new JTextField();
+        contentPane.add(setMapParameters, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        iterationLabel = new JLabel();
+        iterationLabel.setText("Brak danych");
+        contentPane.add(iterationLabel, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        unloadScript = new JButton();
+        unloadScript.setText("Wyładuj skrypt");
+        contentPane.add(unloadScript, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    }
+
+    /**
+     * @noinspection ALL
+     */
+    public JComponent $$$getRootComponent$$$() {
+        return contentPane;
     }
 
 }

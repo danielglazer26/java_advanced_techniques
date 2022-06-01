@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?language javascript?>
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="mainPanel" prefHeight="570.0" prefWidth="579.0" xmlns="http://javafx.com/javafx/18"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="glazer.daniel.app.javafx.Test">
+
+    <fx:script>
+        var TextField = Java.type("javafx.scene.control.TextField");
+        var HBox = Java.type("javafx.scene.layout.HBox");
+        var Label = Java.type("javafx.scene.control.Label");
+        var Insets = Java.type("javafx.geometry.Insets");
+        var ContentDisplay = Java.type("javafx.scene.control.ContentDisplay");
+        var OverrunStyle = Java.type("javafx.scene.control.OverrunStyle");
+        var Priority = Java.type("javafx.scene.layout.Priority");
+        var TextAlignment = Java.type("javafx.scene.text.TextAlignment");
+        var FileChooser = Java.type("javafx.stage.FileChooser");
+        var File = Java.type("java.io.File");
+        var Files = Java.type("java.nio.file.Files");
+        var list;
+
+        function comboBox(event) {
+            var item = typeInvitation.getSelectionModel().getSelectedItem();
+            panel.getChildren().clear();
+            switch (item) {
+                case "Sylwester":
+                    panel.getChildren().add(createDataField("Lokalizacja"));
+                    panel.getChildren().add(createDataField("Godzina"));
+                    break;
+                case "Komunia Święta":
+                    panel.getChildren().add(createDataField("Państwo zapraszane"));
+                    panel.getChildren().add(createDataField("Imię dziecka"));
+                    panel.getChildren().add(createDataField("Data"));
+                    panel.getChildren().add(createDataField("Nazwa kościoła"));
+                    panel.getChildren().add(createDataField("Godzina"));
+                    break;
+                case "Urodziny":
+                    panel.getChildren().add(createDataField("Data z godziną"));
+                    panel.getChildren().add(createDataField("Lokalizacja"));
+                    break;
+                case "Andrzejki":
+                    panel.getChildren().add(createDataField("Data"));
+                    panel.getChildren().add(createDataField("Godzina"));
+                    panel.getChildren().add(createDataField("Adres lokalu"));
+                    panel.getChildren().add(createDataField("Nazwa DJ"));
+                    panel.getChildren().add(createDataField("Koszt"));
+                    panel.getChildren().add(createDataField("Data zapisów do"));
+                    panel.getChildren().add(createDataField("Telefon"));
+                    break;
+                case "Rocznica ślubu":
+                    panel.getChildren().add(createDataField("Państwo zapraszane"));
+                    panel.getChildren().add(createDataField("Rok rocznicy"));
+                    panel.getChildren().add(createDataField("Data"));
+                    panel.getChildren().add(createDataField("Godzina"));
+                    panel.getChildren().add(createDataField("Nazwa kościoła"));
+                    panel.getChildren().add(createDataField("Nazwa restauracji"));
+                    break;
+                default:
+                case "Zaproszenie z pliku":
+                    var fileTemplate = createFileChooser("Wybierz plik schematu zaproszenia")
+                    try {
+                        list = Files.readAllLines(fileTemplate.toPath());
+                        var numberOfFields = parseInt(list.get(0));
+                        for (var i = 0; numberOfFields > i; i++) {
+                            panel.getChildren().add(createDataField(list.get(i + 1)));
+                        }
+                        list.subList(0, numberOfFields + 1).clear();
+                    } catch (e) {
+                        print(e)
+                    }
+                    break;
+            }
+        }
+
+        function test(a) {
+            print(a)
+        }
+
+        function getDataFromTextFields() {
+            var data = []
+            for (var i = 0; panel.getChildren().size() > i; i++) {
+                data.push(getTextFromTextField(panel.getChildren().get(i)))
+            }
+            data.push(getTextFromTextField(namePanel))
+            return data;
+        }
+
+        function buttonGenerate(event) {
+            var data = getDataFromTextFields();
+
+            var item = typeInvitation.getSelectionModel().getSelectedItem();
+            switch (item) {
+                case "Sylwester":
+                    inviteField.setText("Z okazji zbliżającej się wielkimi krokami zmiany daty" +
+                            " serdecznie zapraszam na sylwestrową zabawę, która odbędzie się w " +
+                            data[0] +
+                            " od godziny: " +
+                            data[1] +
+                            ". Obecność jest obowiązkowa, a zabawa będzie stuprocentowa!\n" +
+                            data[2])
+                    break;
+                case "Komunia Święta":
+                    inviteField.setText("Serdecznie zapraszamy Sz.P. " +
+                            data[0] +
+                            "\nna uroczystość przyjęcia przez naszego syna/córkę " +
+                            data[1] +
+                            "\nPierwszej Komunii Świętej, która odbędzie się " +
+                            data[2] +
+                            " roku w kościele " +
+                            data[3] +
+                            " o godzinie " +
+                            data[4] +
+                            "\n" +
+                            data[5])
+                    break;
+                case "Urodziny":
+                    inviteField.setText("Z okazji moich urodzin \n" +
+                            "pragnę was zaprosić na imprezę, \n" +
+                            "która odbędzie się " +
+                            data[0] +
+                            " w " +
+                            data[1] + "\n" +
+                            "Planuję wyśmienitą zabawę przy dobrym jedzeniu (i nie tylko!) \n" +
+                            "oraz w doborowym towarzystwie. \n" +
+                            "Mam nadzieję, że nikogo z zaproszonych nie zabraknie! \n" +
+                            data[2])
+                    break;
+                case "Andrzejki":
+                    inviteField.setText("Już dziś, zapraszamy na Zabawę Andrzejkową 2019, która odbędzie się " +
+                            data[0] +
+                            " o godz. " +
+                            data[1] +
+                            " w lokalu przy " +
+                            data[2] +
+                            " \nWszystkich" +
+                            "Naszych Gości przywitamy obfitą kolacją, " +
+                            "a na stołach królować będą pyszne tradycyjne " +
+                            "potrawy w tym zimne i gorące przystawki.\n" +
+                            "\n" +
+                            "Będzie można skosztować pysznego domowego ciasta, napić się aromatycznej kawy i herbaty a dla tych, którzy zmęczą się na parkiecie, przygotujemy zimne napoje.\n" +
+                            "\n" +
+                            "Zabawę nakręca DJ " +
+                            data[3] +
+                            "\n" +
+                            "\n" +
+                            "Koszt " +
+                            data[4] +
+                            " od pary (alkohol we własnym zakresie).\n" +
+                            "\n" +
+                            "Zapisy do " +
+                            data[5] +
+                            " tel. " +
+                            data[6] +
+                            "\n" +
+                            "\n" +
+                            "Serdecznie zapraszamy wszystkich miłośników tańca i dobrej zabawy.\n" +
+                            data[7])
+                    break;
+                case "Rocznica ślubu":
+                    inviteField.setText("Z wielką radością zapraszamy\n" +
+                            "Sz.P." +
+                            data[0] +
+                            "\n" +
+                            " na uroczystą mszę świętą z okazji " +
+                            data[1] +
+                            " rocznicy naszego ślubu, " +
+                            "która odbędzie się\n" +
+                            "w dniu " +
+                            data[2] +
+                            " o godzinie " +
+                            data[3] +
+                            "\n" +
+                            "w kościele " +
+                            data[4] +
+                            "\n" +
+                            "Po uroczystości zapraszamy na przyjęcie\n" +
+                            "do restauracji " +
+                            data[5] +
+                            "\n" +
+                            data[6])
+                    break;
+                case "Zaproszenie z pliku":
+
+                    for (var i = 0; 5 > i; i++) {
+                        s = s.replaceFirst("....", array.get(i));
+                    }
+                default:
+                    break;
+            }
+        }
+
+        function getTextFromTextField(node) {
+            return node.getChildren().get(1).getText()
+        }
+
+        function createFileChooser(text) {
+            var fileChooser = new FileChooser();
+            fileChooser.setInitialDirectory(new File("."));
+            fileChooser.setTitle(text)
+            return fileChooser.showOpenDialog(mainPanel.getScene().getWindow())
+        }
+
+        function styleButton(event) {
+            var file = createFileChooser("Otwórz plik css")
+            if (file != null) {
+                var scene = mainPanel.getScene();
+                scene.getStylesheets().clear()
+                scene.getStylesheets().add(file.toURI().toASCIIString())
+            }
+        }
+
+        function createDataField(text) {
+            var df = new HBox();
+
+            var lbl = new Label(text);
+            lbl.setContentDisplay(ContentDisplay.CENTER);
+            lbl.setPrefHeight(25.0);
+            lbl.setTextAlignment(TextAlignment.CENTER);
+            lbl.setTextOverrun(OverrunStyle.WORD_ELLIPSIS);
+            lbl.setPadding(new Insets(5.0, 5.0, 5.0, 5.0));
+            df.getChildren().add(lbl);
+
+            var tf = new TextField();
+            df.getChildren().add(tf);
+
+            HBox.setHgrow(tf, Priority.ALWAYS);
+            HBox.setMargin(lbl, new Insets(10.0, 10.0, 0.0, 10.0));
+            HBox.setMargin(tf, new Insets(10.0, 10.0, 10.0, 10.0));
+            return df;
+        }
+    </fx:script>
+    <HBox>
+        <VBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+        </VBox.margin>
+        <Button mnemonicParsing="false" onAction="styleButton(event);" prefHeight="25.0" prefWidth="100.0"
+                text="Styl"/>
+        <Pane HBox.hgrow="ALWAYS"/>
+        <Label alignment="CENTER" prefHeight="25.0" prefWidth="190.0" text="Wybierz typ zaproszenia:"
+               textOverrun="WORD_ELLIPSIS"/>
+        <ComboBox fx:id="typeInvitation" onAction="comboBox(event);" promptText="Typ zaproszenia">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="Sylwester"/>
+                    <String fx:value="Komunia Święta"/>
+                    <String fx:value="Urodziny"/>
+                    <String fx:value="Andrzejki"/>
+                    <String fx:value="Rocznica ślubu"/>
+                    <String fx:value="Zaproszenie z pliku"/>
+                </FXCollections>
+            </items>
+        </ComboBox>
+    </HBox>
+    <VBox fx:id="panel">
+    </VBox>
+    <HBox fx:id="namePanel">
+        <VBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+        </VBox.margin>
+        <Label contentDisplay="CENTER" prefHeight="25.0" text="Organizator:" textAlignment="CENTER"
+               textOverrun="WORD_ELLIPSIS">
+            <HBox.margin>
+                <Insets/>
+            </HBox.margin>
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+            </padding>
+        </Label>
+        <TextField HBox.hgrow="ALWAYS">
+            <HBox.margin>
+                <Insets/>
+            </HBox.margin>
+        </TextField>
+    </HBox>
+    <BorderPane>
+        <VBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+        </VBox.margin>
+        <center>
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="buttonGenerate(event);"
+                    text="Wygeneruj zaproszenie" BorderPane.alignment="CENTER"/>
+        </center>
+    </BorderPane>
+    <TextArea fx:id="inviteField" editable="false" prefHeight="200.0" prefWidth="200.0" wrapText="true"
+              VBox.vgrow="ALWAYS">
+        <VBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+        </VBox.margin>
+    </TextArea>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+    </padding>
+</VBox>

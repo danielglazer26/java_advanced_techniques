@@ -7,16 +7,18 @@
 
 
 var ArrayList = Java.type("java.util.ArrayList");
-var map = new ArrayList();
+var map;
 var antX;
 var antY;
 var sizeMap;
 
 
 function createMap(size, startingX, startingY) {
+    sizeMap = size
+    map = new ArrayList();
 
     for (var i = 0; i < size; i++) {
-        var y = new ArrayList(size);
+        var y = new ArrayList();
         for (var j = 0; j < size; j++) {
             if (startingX === j && startingY === i) {
                 y.add(3.0);
@@ -28,18 +30,17 @@ function createMap(size, startingX, startingY) {
     }
     antX = startingX;
     antY = startingY;
-    sizeMap = size
     return map;
 }
 
 function nextIteration() {
     var fieldValue = map.get(antY).get(antX);
     var direction;
-    if (fieldValue < 10) {
+    if (fieldValue < 10.0) {
         direction = changeAntDirection(fieldValue, 1)
         map.get(antY).set(antX, 10.0);
     } else {
-        direction = changeAntDirection(fieldValue - 10, -1)
+        direction = changeAntDirection(fieldValue - 10.0, -1)
         map.get(antY).set(antX, 0.0);
     }
     moveAnt(direction);
