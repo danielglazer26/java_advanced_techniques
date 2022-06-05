@@ -5,8 +5,8 @@ Data
 Godzina
 Nazwa kościoła
 Nazwa lokalu
-....\n
-Serdecznie zapraszają\n
-Na mszę świętą z okazji .... rocznicy ślubu, która odbędzie się .... roku o godzinie .... \n
-w kościele ..... \n
-Po mszy świętej serdecznie zapraszamy na przyjęcie na sali .... .
+....
+Serdecznie zapraszają
+Na mszę świętą z okazji .... rocznicy ślubu, która odbędzie się .... roku o godzinie ....
+w kościele .....
+Po mszy świętej serdecznie zapraszamy na przyjęcie na sali .....
