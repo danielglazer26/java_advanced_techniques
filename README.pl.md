@@ -1,21 +1,22 @@
 # Java Techniki Zaawansowane
 
 ## Spis treści
-* [Laboratorium 1](#laboratorium-1)
-* [Laboratorium 2](#laboratorium-2)
-* [Laboratorium 3](#laboratorium-3)
-* [Laboratorium 4](#laboratorium-4)
-* [Laboratorium 5](#laboratorium-5)
-* [Laboratorium 6](#laboratorium-6)
-* [Laboratorium 7](#laboratorium-7)
-* [Laboratorium 8](#laboratorium-8)
-* [Laboratorium 9](#laboratorium-9)
-* [Laboratorium 10](#laboratorium-10)
-* [Laboratorium 11](#laboratorium-11) 
-* [Laboratorium 12](#laboratorium-12) 
-* [Laboratorium 13](#laboratorium-13) 
-* [Laboratorium 14](#laboratorium-14)  
-* [Laboratorium 15](#laboratorium-15) 
+* [Laboratorium 1 - MD5](#laboratorium-1)
+* [Laboratorium 2 - WeakReferences](#laboratorium-2)
+* [Laboratorium 3 - RestAPI](#laboratorium-3)
+* [Laboratorium 4 - Java Reflection API](#laboratorium-4)
+* [Laboratorium 5 - Service Provider Interface](#laboratorium-5)
+* [Laboratorium 6 - RMI wirh SSL Sockets](#laboratorium-6)
+* [Laboratorium 7 - Hibernate](#laboratorium-7)
+* [Laboratorium 8 - Spring Boot Soap Web Service](#laboratorium-8)
+* [Laboratorium 9 - Java Cryptography Architecture](#laboratorium-9)
+* [Laboratorium 10 - Multi-Release Jar](#laboratorium-10)
+* [Laboratorium 11 - Java Native Interface](#laboratorium-11)
+* [Laboratorium 12 - JavaScript](#laboratorium-12)
+* [Laboratorium 13 - JavaFX with JavaScript](#laboratorium-13)
+* [Laboratorium 14 - Java Management Extensions](#laboratorium-14)
+* [Laboratorium 15 - BigDecimal](#laboratorium-15)
+
 ## Laboratorium 1
 
 Polecenie
